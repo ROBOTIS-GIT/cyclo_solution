@@ -1,0 +1,8 @@
+objects:
+  table_box:
+    type: cube
+    default_attachment_frame: end_effector_r_link
+    pose:
+      position: [0.0, 0.0, -0.06]
+      orientation: [0.0, 0.0, 0.0, 1.0]
+    scale: [0.230, 0.060, 0.200]

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+	<xacro:macro name="zed_camera" params="name=zed model=zedm">
+		<link name="${name}_camera_link" />
+		<link name="${name}_camera_center">
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="package://cyclo_cumotion_description/meshes/common/follower/zedm.stl" scale="0.001 0.001 0.001"/>
+				</geometry>
+				<material name="zedm_mat">
+					<color rgba="0.25 0.25 0.25 1.0"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="package://cyclo_cumotion_description/meshes/common/follower/zedm.stl" scale="0.001 0.001 0.001"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="${name}_camera_center_joint" type="fixed">
+			<parent link="${name}_camera_link"/>
+			<child link="${name}_camera_center"/>
+			<origin xyz="0 0 0.01325" rpy="0 0 0" />
+		</joint>
+		<link name="${name}_left_camera_frame"/>
+		<joint name="${name}_left_camera_joint" type="fixed">
+			<parent link="${name}_camera_center"/>
+			<child link="${name}_left_camera_frame"/>
+			<origin xyz="0 0.0315 0" rpy="0 0 0" />
+		</joint>
+		<link name="${name}_left_camera_optical_frame"/>
+		<joint name="${name}_left_camera_optical_joint" type="fixed">
+			<origin xyz="0 0 0" rpy="-1.57079632679 0.0 -1.57079632679"/>
+			<parent link="${name}_left_camera_frame"/>
+			<child link="${name}_left_camera_optical_frame"/>
+		</joint>
+		<link name="${name}_right_camera_frame"/>
+		<joint name="${name}_right_camera_joint" type="fixed">
+			<parent link="${name}_camera_center"/>
+			<child link="${name}_right_camera_frame"/>
+			<origin xyz="0 -0.0315 0" rpy="0 0 0" />
+		</joint>
+		<link name="${name}_right_camera_optical_frame"/>
+		<joint name="${name}_right_camera_optical_joint" type="fixed">
+			<origin xyz="0 0 0" rpy="-1.57079632679 0.0 -1.57079632679"/>
+			<parent link="${name}_right_camera_frame"/>
+			<child link="${name}_right_camera_optical_frame"/>
+		</joint>
+	</xacro:macro>
+</robot>

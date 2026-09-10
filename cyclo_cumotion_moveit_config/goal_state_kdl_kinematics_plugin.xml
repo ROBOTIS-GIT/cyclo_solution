@@ -1,0 +1,9 @@
+
+<library path="cyclo_goal_state_kdl_kinematics">
+  <class
+    name="cyclo_cumotion_moveit_config/GoalStateKDLKinematicsPlugin"
+    type="cyclo_cumotion_moveit_config::GoalStateKDLKinematicsPlugin"
+    base_class_type="kinematics::KinematicsBase">
+    <description>KDL IK with exact RViz Query Goal sphere updates.</description>
+  </class>
+</library>

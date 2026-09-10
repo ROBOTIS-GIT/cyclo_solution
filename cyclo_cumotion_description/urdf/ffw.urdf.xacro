@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="cyclo_cumotion_ffw">
+  <xacro:include filename="$(find cyclo_cumotion_description)/urdf/common/follower/ffw_follower_body.xacro"/>
+  <xacro:include filename="$(find cyclo_cumotion_description)/urdf/common/rh_p12_rn_a/rh_p12_rn_a.urdf.xacro"/>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/base_mobile_assy.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver">
+        <color rgba="0.75 0.75 0.75 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/base_mobile_assy.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!--
+    Keep the mobile-base links in the MoveIt robot model so full live JointState
+    messages can be consumed safely and RViz shows the complete robot.  These
+    links intentionally have visual geometry only; cuMotion collision geometry
+    remains defined by the XRDF collision spheres.
+  -->
+  <joint name="lift_fixed_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lift_link"/>
+  </joint>
+  <link name="lift_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/lift_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+
+  <xacro:ffw_follower_body parent="base_link" prefix="">
+    <origin xyz="-0.0199 0 1.4316" rpy="0 0 0"/>
+  </xacro:ffw_follower_body>
+
+  <xacro:rh_p12_rn_a parent="arm_l_link7" prefix="gripper_l_">
+    <origin xyz="0 0 -0.078" rpy="0 3.14159265359 3.14159265359"/>
+  </xacro:rh_p12_rn_a>
+  <joint name="end_effector_l_joint" type="fixed">
+    <parent link="arm_l_link7"/>
+    <child link="end_effector_l_link"/>
+    <origin xyz="0 0 -0.215" rpy="0 0 0"/>
+  </joint>
+  <link name="end_effector_l_link"/>
+  <joint name="wholebody_control_l_joint" type="fixed">
+    <parent link="end_effector_l_link"/>
+    <child link="wholebody_control_l_link"/>
+  </joint>
+  <link name="wholebody_control_l_link"/>
+
+  <xacro:rh_p12_rn_a parent="arm_r_link7" prefix="gripper_r_">
+    <origin xyz="0 0 -0.078" rpy="0 3.14159265359 3.14159265359"/>
+  </xacro:rh_p12_rn_a>
+  <joint name="end_effector_r_joint" type="fixed">
+    <parent link="arm_r_link7"/>
+    <child link="end_effector_r_link"/>
+    <origin xyz="0 0 -0.215" rpy="0 0 0"/>
+  </joint>
+  <link name="end_effector_r_link"/>
+  <joint name="wholebody_control_r_joint" type="fixed">
+    <parent link="end_effector_r_link"/>
+    <child link="wholebody_control_r_link"/>
+  </joint>
+  <link name="wholebody_control_r_link"/>
+
+  <joint name="left_wheel_steer" type="revolute">
+    <parent link="base_link"/>
+    <child link="left_wheel_steer_link"/>
+    <origin xyz="0.1371 0.2554 0.27555" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit velocity="9999.0" effort="9999.0" lower="-18.8495559215" upper="18.8495559215"/>
+  </joint>
+  <link name="left_wheel_steer_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/left_wheel_steer_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+  <joint name="left_wheel_drive" type="continuous">
+    <parent link="left_wheel_steer_link"/>
+    <child link="left_wheel_drive_link"/>
+    <origin xyz="0 0 -0.18905" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit velocity="9999.0" effort="9999.0"/>
+  </joint>
+  <link name="left_wheel_drive_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/left_wheel_drive_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+
+  <joint name="right_wheel_steer" type="revolute">
+    <parent link="base_link"/>
+    <child link="right_wheel_steer_link"/>
+    <origin xyz="0.1371 -0.2554 0.27555" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit velocity="9999.0" effort="9999.0" lower="-18.8495559215" upper="18.8495559215"/>
+  </joint>
+  <link name="right_wheel_steer_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/right_wheel_steer_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+  <joint name="right_wheel_drive" type="continuous">
+    <parent link="right_wheel_steer_link"/>
+    <child link="right_wheel_drive_link"/>
+    <origin xyz="0 0 -0.18905" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit velocity="9999.0" effort="9999.0"/>
+  </joint>
+  <link name="right_wheel_drive_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/right_wheel_drive_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+
+  <joint name="rear_wheel_steer" type="revolute">
+    <parent link="base_link"/>
+    <child link="rear_wheel_steer_link"/>
+    <origin xyz="-0.2899 0 0.27555" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit velocity="9999.0" effort="9999.0" lower="-18.8495559215" upper="18.8495559215"/>
+  </joint>
+  <link name="rear_wheel_steer_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/rear_wheel_steer_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+  <joint name="rear_wheel_drive" type="continuous">
+    <parent link="rear_wheel_steer_link"/>
+    <child link="rear_wheel_drive_link"/>
+    <origin xyz="0 0 -0.18905" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit velocity="9999.0" effort="9999.0"/>
+  </joint>
+  <link name="rear_wheel_drive_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://cyclo_cumotion_description/meshes/common/follower/ffw/rear_wheel_drive_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+</robot>

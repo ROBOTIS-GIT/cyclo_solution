@@ -1,0 +1,12 @@
+arm_l:
+  kinematics_solver: cyclo_cumotion_moveit_config/GoalStateKDLKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.05
+arm_r:
+  kinematics_solver: cyclo_cumotion_moveit_config/GoalStateKDLKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.05
+wholebody:
+  kinematics_solver: cyclo_cumotion_moveit_config/WholebodyGoalKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.25

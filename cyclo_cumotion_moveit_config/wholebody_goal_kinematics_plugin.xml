@@ -1,0 +1,9 @@
+
+<library path="cyclo_wholebody_goal_kinematics">
+  <class
+    name="cyclo_cumotion_moveit_config/WholebodyGoalKinematicsPlugin"
+    type="cyclo_cumotion_moveit_config::WholebodyGoalKinematicsPlugin"
+    base_class_type="kinematics::KinematicsBase">
+    <description>MoveIt IK for RViz FFW wholebody goal-state interaction.</description>
+  </class>
+</library>

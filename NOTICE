@@ -1,0 +1,13 @@
+Cyclo Solution: ROBOTIS Isaac ROS cuMotion
+Copyright 2026 ROBOTIS CO., LTD.
+
+This distribution includes material derived from the ROBOTIS AI Worker project:
+https://github.com/ROBOTIS-GIT/ai_worker
+
+The cyclo_cumotion_robot_segmenter package is derived from NVIDIA Isaac ROS cuMotion:
+https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_cumotion
+Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+The project and the referenced derived works are distributed under the Apache
+License, Version 2.0. File-level notices identify original and modification
+authorship where applicable.
