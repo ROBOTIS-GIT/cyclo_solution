@@ -1,133 +1,118 @@
 # Cyclo Solution
 
-Cyclo Solution contains modular Isaac ROS applications for ROBOTIS robots. The
-current `cyclo_cumotion` module integrates MoveIt 2, Isaac ROS cuMotion, nvblox,
-and moving-camera robot segmentation for FFW robots.
-
-The repository is bind-mounted at `/root/ros2_ws/src/cyclo_solution` so source
-changes are immediately available in the development container.
+Cyclo Solution provides MoveIt 2 and Isaac ROS cuMotion integration for
+ROBOTIS FFW robots. Related packages are grouped under `cyclo_cumotion/`.
 
 ## Packages
 
-- `cyclo_cumotion`: module bringup and feature meta-package
-- `cyclo_cumotion_description`: common FFW planning robot description
-- `cyclo_cumotion_moveit_config`: MoveIt, cuMotion, and XRDF configuration
-- `cyclo_cumotion_nvblox`: robot-segmented nvblox integration
-- `cyclo_cumotion_object_attachment`: predefined-object attachment integration
-- `cyclo_cumotion_robot_segmenter`: moving-camera robot segmenter
+- `cyclo_cumotion_bringup`: integrated launch files
+- `cyclo_cumotion_description`: FFW planning model
+- `cyclo_cumotion_moveit_config`: MoveIt and cuMotion configuration
+- `cyclo_cumotion_nvblox`: multi-camera nvblox integration
+- `cyclo_cumotion_object_attachment`: predefined object attachment
+- `cyclo_cumotion_robot_segmenter`: robot removal from depth images
 
-The cuMotion-specific message and service definitions are provided by the
+The repository is mounted in the container at
+`/root/ros2_ws/src/cyclo_solution`. The Docker image also builds the
 `feature-cumotion` branch of
 [`robotis_interfaces`](https://github.com/ROBOTIS-GIT/robotis_interfaces).
-The development image clones and builds that branch together with this
-repository.
 
-## Development container
+## Container
 
 ```bash
-cd cyclo_solution/docker
-./container.sh start
-./container.sh enter
+cd cyclo_solution
+./docker/container.sh start
+./docker/container.sh enter
 ```
 
-The image uses ROS 2 Jazzy and Isaac ROS 4.6. The single amd64 Dockerfile can
-reuse `robotis/cyclo-solution:4.6-local` as a prebuilt dependency base when it
-is available, so CUDA and Isaac ROS packages are not rebuilt unnecessarily.
-
-Build the workspace inside the container:
+`start` pulls `robotis/cyclo-solution:0.1.0` and starts a container that is
+automatically restarted after a host reboot. Build source changes inside the
+container with:
 
 ```bash
 cb
 ```
 
-Only Dockerfile or system dependency changes require an image rebuild.
-
-## cuMotion planning
-
-Launch the common FFW planning model:
+Rebuild the image only after changing the Dockerfile or system dependencies:
 
 ```bash
-ros2 launch cyclo_cumotion cumotion_moveit.launch.py
+docker build -f docker/Dockerfile.amd64 \
+  -t robotis/cyclo-solution:0.1.0-local .
+
+CYCLO_IMAGE=robotis/cyclo-solution:0.1.0-local \
+CYCLO_SKIP_PULL=1 \
+  ./docker/container.sh start
 ```
 
-The model shares the lift, arms, grippers, planning groups, and collision
-spheres across FFW variants. The common URDF also contains the SG2 swerve-wheel
-joints and visual links so full SG2 joint-state messages are valid. On BG2,
-those joints remain at their zero defaults and are outside every planning
-group and the cuMotion collision-sphere model.
+## Run cuMotion
 
-Available MoveIt planning groups are `arm_l`, `arm_r`, `both_arms`, and
-`wholebody`. A single cuMotion backend is reconfigured by the group router when
-the selected group changes.
-
-Depth-based world collision checking is disabled by default. Enable it with:
+The robot bringup must already be running. Start cuMotion with:
 
 ```bash
-ros2 launch cyclo_cumotion cumotion_moveit.launch.py \
-  read_esdf_world:=true
+ros2 launch cyclo_cumotion_bringup cumotion_moveit.launch.py
 ```
 
-A static MoveIt scene can be enabled independently:
+Planning groups are `arm_l`, `arm_r`, `both_arms`, and `wholebody`. RViz is
+started by default.
+
+Common options:
+
+| Option | Description |
+| --- | --- |
+| `read_esdf_world:=true` | Enable nvblox collision checking |
+| `nvblox_camera_set:=all` | Use the ZED and both wrist depth cameras (default) |
+| `nvblox_camera_set:=head` | Use only the ZED |
+| `nvblox_camera_set:=right` | Use both wrist depth cameras (legacy option name) |
+| `enable_object_attachment:=true` | Enable predefined object attachment |
+| `enable_static_scene:=true` | Load the configured static collision scene |
+| `start_rviz:=false` | Run without RViz |
+
+Options can be combined. For example:
 
 ```bash
-ros2 launch cyclo_cumotion cumotion_moveit.launch.py \
-  enable_static_scene:=true
-```
-
-Object attachment is disabled by default. Enable the NVIDIA attachment node
-and predefined-object catalog together with cuMotion using:
-
-```bash
-ros2 launch cyclo_cumotion cumotion_moveit.launch.py \
+ros2 launch cyclo_cumotion_bringup cumotion_moveit.launch.py \
+  read_esdf_world:=true \
   enable_object_attachment:=true
 ```
 
-Attach the catalog's `small_box` to either gripper. An empty
-`attachment_frame` uses the object's configured default:
+Planned robot motion and end-effector paths are shown in RViz. The
+end-effector line is removed after playback by default. Keep it with
+`planned_end_effector_path_auto_clear:=false`.
+
+## Object attachment
+
+Launch with `enable_object_attachment:=true`, then attach the catalog's
+`table_box`. Leaving `attachment_frame` empty uses its configured default,
+`end_effector_r_link`.
 
 ```bash
 ros2 service call \
   /cyclo_cumotion/object_attachment/attach_by_name \
   robotis_interfaces/srv/AttachObjectByName \
-  "{object_name: small_box, attachment_frame: end_effector_l_link}"
+  "{object_name: table_box, attachment_frame: ''}"
+
 ros2 service call \
-  /cyclo_cumotion/object_attachment/detach std_srvs/srv/Trigger '{}'
+  /cyclo_cumotion/object_attachment/detach \
+  std_srvs/srv/Trigger '{}'
 ```
 
-Objects are defined in
-`cyclo_cumotion_object_attachment/config/predefined_objects.yaml`. Attached
-collision spheres and the selected left/right attachment frame are preserved
-when switching between `arm_l`, `arm_r`, `both_arms`, and `wholebody`.
-
-No perception topic or CenterPose gateway is started. The
-`robotis_interfaces/AttachmentGeometry` message remains as the neutral
-geometry contract for a future perception adapter; the current runtime only
-accepts catalog object names.
+Objects are configured in
+`cyclo_cumotion/cyclo_cumotion_object_attachment/config/predefined_objects.yaml`.
 
 ## Zenoh
 
-Docker Compose does not start a Zenoh router. Start one explicitly with the
-`zenohd` alias when a local router is required. No `ZENOH_CONFIG_OVERRIDE` is
-set by the Dockerfile or Compose configuration.
+The repository does not set a remote Zenoh endpoint. Configure
+`ZENOH_CONFIG_OVERRIDE` in the container user's `.bashrc`, or run the local
+router with the `zenohd` alias.
 
-When a remote router is required, set `ZENOH_CONFIG_OVERRIDE` explicitly in the
-container user's `.bashrc`. The endpoint is intentionally not stored in this
-repository.
-
-Stop and remove the module containers with:
-
-```bash
-./container.sh stop
-```
+Stop and remove the container with `./docker/container.sh stop`.
 
 ## References
 
-- [Isaac ROS Getting Started](https://nvidia-isaac-ros.github.io/getting_started/index.html)
 - [Isaac ROS cuMotion MoveIt](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion_moveit/index.html)
-- [Isaac ROS cuMotion Object Attachment](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion_object_attachment/index.html)
+- [Isaac ROS Object Attachment](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion_object_attachment/index.html)
 
-## License and attribution
+## License
 
-This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
-`cyclo_cumotion_robot_segmenter` contains modifications derived from NVIDIA
-Isaac ROS cuMotion. See [NOTICE](NOTICE) for attribution.
+This project is licensed under Apache License 2.0. See [LICENSE](LICENSE) and
+[NOTICE](NOTICE).

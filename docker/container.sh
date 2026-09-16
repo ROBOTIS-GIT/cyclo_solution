@@ -2,8 +2,8 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONTAINER_NAME="cyclo_solution"
-IMAGE_NAME="robotis/cyclo-solution:0.1.0-local"
-CACHE_IMAGE="robotis/cyclo-solution:4.6-local"
+DEFAULT_IMAGE="robotis/cyclo-solution:0.1.0"
+IMAGE_NAME="${CYCLO_IMAGE:-${DEFAULT_IMAGE}}"
 
 configure_x11() {
     if [ -z "${DISPLAY:-}" ]; then
@@ -29,14 +29,17 @@ show_help() {
     echo ""
     echo "Commands:"
     echo "  help                    Show this help message"
-    echo "  start                   Start the container"
+    echo "  start                   Pull and start the container"
     echo "  enter                   Enter the running container"
     echo "  stop                    Stop the container"
     echo ""
     echo "Examples:"
-    echo "  $0 start                Build and start the container"
+    echo "  $0 start                Pull and start the released image"
     echo "  $0 enter                Enter the running container"
     echo "  $0 stop                 Stop the container"
+    echo ""
+    echo "Local image override:"
+    echo "  CYCLO_IMAGE=<tag> CYCLO_SKIP_PULL=1 $0 start"
 }
 
 start_container() {
@@ -47,20 +50,18 @@ start_container() {
         *) echo "Error: This environment currently supports x86_64 only."; return 1 ;;
     esac
 
-    echo "Building ${IMAGE_NAME}..."
-    BUILD_ARGS=()
-    if docker image inspect "${CACHE_IMAGE}" >/dev/null 2>&1; then
-        echo "Reusing dependency layers from ${CACHE_IMAGE}."
-        BUILD_ARGS+=(
-            --build-arg "BASE_IMAGE=${CACHE_IMAGE}"
-            --build-arg "USE_PREBUILT_DEPENDENCIES=1"
-        )
+    echo "Starting cyclo_solution with ${IMAGE_NAME}..."
+
+    if [ "${CYCLO_SKIP_PULL:-0}" = "1" ]; then
+        if ! docker image inspect "${IMAGE_NAME}" >/dev/null 2>&1; then
+            echo "Error: Local image '${IMAGE_NAME}' was not found."
+            return 1
+        fi
+        echo "Using local image without pulling."
+    else
+        CYCLO_IMAGE="${IMAGE_NAME}" \
+            docker compose -f "${SCRIPT_DIR}/docker-compose.yml" pull || return 1
     fi
-    docker build \
-        "${BUILD_ARGS[@]}" \
-        -f "${SCRIPT_DIR}/Dockerfile.amd64" \
-        -t "${IMAGE_NAME}" \
-        "${SCRIPT_DIR}/.." || return 1
 
     CYCLO_IMAGE="${IMAGE_NAME}" \
         docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
