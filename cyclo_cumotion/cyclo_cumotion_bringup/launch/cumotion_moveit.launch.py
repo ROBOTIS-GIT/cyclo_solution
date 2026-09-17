@@ -41,6 +41,15 @@ from moveit_configs_utils import MoveItConfigsBuilder
 _instance_lock = None
 
 
+def segmenter_count_for_camera_set(camera_set):
+    """Return the number of robot segmenters launched for one camera set."""
+    return {
+        'all': 3,
+        'head': 1,
+        'wrists': 2,
+    }[camera_set]
+
+
 def acquire_instance_lock():
     """Prevent two launch trees from publishing the same global endpoints."""
     global _instance_lock
@@ -80,7 +89,7 @@ def launch_setup(context):
         LaunchConfiguration('read_esdf_world').perform(context).lower() == 'true'
     )
     camera_set = LaunchConfiguration('nvblox_camera_set').perform(context)
-    segmenter_count = 3 if camera_set == 'all' else 1
+    segmenter_count = segmenter_count_for_camera_set(camera_set)
     static_scene_file = (
         LaunchConfiguration('moveit_collision_objects_scene_file').perform(context)
         if enable_static_scene

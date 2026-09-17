@@ -8,6 +8,7 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch config
-  DESTINATION share/${PROJECT_NAME})
+  DESTINATION share/${PROJECT_NAME}
+  PATTERN "__pycache__" EXCLUDE)
 
 ament_package()

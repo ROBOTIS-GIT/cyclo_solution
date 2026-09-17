@@ -123,6 +123,9 @@ class CumotionGroupRouter(Node):
         super().__init__('cumotion_group_router')
         callback_group = ReentrantCallbackGroup()
         self._planning_lock = threading.Lock()
+        self._backend_goal_guard = threading.Lock()
+        self._backend_goals = {}
+        self._backend_cancel_sent = set()
         configured_groups = tuple(self.declare_parameter(
             'enabled_groups', list(self._supported_groups)).value)
         unknown_groups = set(configured_groups) - set(self._supported_groups)
@@ -1210,7 +1213,55 @@ class CumotionGroupRouter(Node):
         return GoalResponse.ACCEPT
 
     @staticmethod
-    def _cancel(_goal_handle):
+    def _goal_key(goal_handle):
+        return bytes(goal_handle.goal_id.uuid)
+
+    def _send_backend_cancel(self, goal_key, backend_handle):
+        future = backend_handle.cancel_goal_async()
+        future.add_done_callback(partial(
+            self._on_backend_cancel_complete, goal_key))
+
+    def _on_backend_cancel_complete(self, goal_key, future):
+        try:
+            future.result()
+        except Exception as error:  # noqa: BLE001
+            self.get_logger().warning(
+                f'Failed to forward action cancellation to cuMotion for '
+                f'{goal_key.hex()}: {error}')
+
+    def _register_backend_goal(self, goal_handle, backend_handle):
+        goal_key = self._goal_key(goal_handle)
+        cancel_backend = None
+        with self._backend_goal_guard:
+            self._backend_goals[goal_key] = backend_handle
+            if (
+                goal_handle.is_cancel_requested
+                and goal_key not in self._backend_cancel_sent
+            ):
+                self._backend_cancel_sent.add(goal_key)
+                cancel_backend = backend_handle
+        if cancel_backend is not None:
+            self._send_backend_cancel(goal_key, cancel_backend)
+
+    def _unregister_backend_goal(self, goal_handle):
+        goal_key = self._goal_key(goal_handle)
+        with self._backend_goal_guard:
+            self._backend_goals.pop(goal_key, None)
+            self._backend_cancel_sent.discard(goal_key)
+
+    def _cancel(self, goal_handle):
+        goal_key = self._goal_key(goal_handle)
+        cancel_backend = None
+        with self._backend_goal_guard:
+            backend_handle = self._backend_goals.get(goal_key)
+            if (
+                backend_handle is not None
+                and goal_key not in self._backend_cancel_sent
+            ):
+                self._backend_cancel_sent.add(goal_key)
+                cancel_backend = backend_handle
+        if cancel_backend is not None:
+            self._send_backend_cancel(goal_key, cancel_backend)
         return CancelResponse.ACCEPT
 
     @staticmethod
@@ -1770,9 +1821,9 @@ class CumotionGroupRouter(Node):
                 goal_handle.abort()
                 return self._motion_plan_failure(message)
 
+            self._register_backend_goal(goal_handle, backend_handle)
             wrapped_result = await backend_handle.get_result_async()
             if goal_handle.is_cancel_requested:
-                await backend_handle.cancel_goal_async()
                 goal_handle.canceled()
             elif wrapped_result.result.success:
                 display_start = RobotState()
@@ -1787,6 +1838,7 @@ class CumotionGroupRouter(Node):
                 goal_handle.abort()
             return wrapped_result.result
         finally:
+            self._unregister_backend_goal(goal_handle)
             if restore_model is not None:
                 restore_urdf, restore_xrdf = restore_model
                 try:
@@ -1926,6 +1978,7 @@ class CumotionGroupRouter(Node):
                 goal_handle.abort()
                 return self._ik_failure(message)
 
+            self._register_backend_goal(goal_handle, backend_handle)
             wrapped_result = await backend_handle.get_result_async()
             has_solution = (
                 wrapped_result.result.error_code.val == MoveItErrorCodes.SUCCESS
@@ -1933,7 +1986,6 @@ class CumotionGroupRouter(Node):
                 and bool(wrapped_result.result.joint_states)
             )
             if goal_handle.is_cancel_requested:
-                await backend_handle.cancel_goal_async()
                 goal_handle.canceled()
             elif has_solution:
                 goal_handle.succeed()
@@ -1941,6 +1993,7 @@ class CumotionGroupRouter(Node):
                 goal_handle.abort()
             return wrapped_result.result
         finally:
+            self._unregister_backend_goal(goal_handle)
             if restore_model is not None:
                 restore_urdf, restore_xrdf = restore_model
                 try:
@@ -2042,9 +2095,9 @@ class CumotionGroupRouter(Node):
                 goal_handle.abort()
                 return self._failure_result()
 
+            self._register_backend_goal(goal_handle, backend_handle)
             wrapped_result = await backend_handle.get_result_async()
             if goal_handle.is_cancel_requested:
-                await backend_handle.cancel_goal_async()
                 goal_handle.canceled()
             elif wrapped_result.result.error_code.val == MoveItErrorCodes.SUCCESS:
                 # The backend start state is group-filtered. Replace only its
@@ -2065,6 +2118,7 @@ class CumotionGroupRouter(Node):
                 goal_handle.abort()
             return wrapped_result.result
         finally:
+            self._unregister_backend_goal(goal_handle)
             self._planning_lock.release()
 
 

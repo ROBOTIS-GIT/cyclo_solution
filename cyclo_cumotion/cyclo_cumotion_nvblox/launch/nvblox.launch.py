@@ -248,7 +248,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'camera_set', default_value='all', choices=['all', 'head', 'wrists'],
             description=(
-                'Use all depth cameras, only the head ZED, or only the'
+                'Use all depth cameras, only the head ZED, or only the '
                 'wrist cameras')),
         DeclareLaunchArgument(
             'robot_description_service_name',

@@ -17,6 +17,7 @@
   <exec_depend>cyclo_cumotion_object_attachment</exec_depend>
   <exec_depend>cyclo_cumotion_robot_segmenter</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>isaac_ros_cumotion</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>moveit_configs_utils</exec_depend>
