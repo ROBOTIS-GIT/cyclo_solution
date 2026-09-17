@@ -339,7 +339,7 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 'nvblox_camera_set',
                 default_value='all',
-                choices=['all', 'head', 'right'],
+                choices=['all', 'head', 'wrists'],
                 description='Depth cameras integrated into the nvblox world model',
             ),
             DeclareLaunchArgument(
