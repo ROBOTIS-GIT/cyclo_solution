@@ -28,8 +28,9 @@
 #include "cyclo_cumotion_robot_segmenter/robot_segmenter.hpp"
 
 #include <algorithm>
-#include <cmath>
 #include <chrono>
+#include <cinttypes>
+#include <cmath>
 #include <fstream>
 #include <limits>
 #include <sstream>
@@ -184,11 +185,11 @@ RobotSegmenter::RobotSegmenter(const rclcpp::NodeOptions & options)
     get_logger(),
     "Robot segmenter initialized. Listening for generation reloads on topic '%s', "
     "acknowledging on '%s', and fetching descriptions from service '%s'. "
-    "TF wait: %ld ms, poll: %ld ms, queue: %zu",
+    "TF wait: %" PRId64 " ms, poll: %" PRId64 " ms, queue: %zu",
     reload_topic_name.c_str(), reload_ack_topic_name.c_str(),
     robot_description_service_name_.c_str(),
-    static_cast<long>(tf_lookup_timeout_.count()),
-    static_cast<long>(tf_poll_period_.count()), pending_depth_queue_size_);
+    static_cast<int64_t>(tf_lookup_timeout_.count()),
+    static_cast<int64_t>(tf_poll_period_.count()), pending_depth_queue_size_);
 }
 
 void RobotSegmenter::CacheRobotCspaceMetadata()
@@ -554,9 +555,9 @@ void RobotSegmenter::ProcessPendingDepthFrames()
 
     RCLCPP_DEBUG_THROTTLE(
       get_logger(), *get_clock(), 5000,
-      "Dropping depth frame after waiting %lld ms for transform from '%s' to '%s' "
+      "Dropping depth frame after waiting %" PRId64 " ms for transform from '%s' to '%s' "
       "at the image timestamp: %s",
-      static_cast<long long>(wait_time.count()),
+      static_cast<int64_t>(wait_time.count()),
       depth_camera_info_->header.frame_id.c_str(), robot_base_frame_.c_str(),
       oldest_transform_error.c_str());
     pending_depth_frames_.pop_front();
@@ -626,8 +627,7 @@ void RobotSegmenter::ReloadRobotDescriptionCallback(const std_msgs::msg::UInt64:
   }
 
   RCLCPP_INFO(
-    get_logger(), "Received robot-description reload generation %llu",
-    static_cast<unsigned long long>(msg->data));
+    get_logger(), "Received robot-description reload generation %" PRIu64, msg->data);
   FetchAndReinitializeRobotDescription(msg->data);
 }
 
@@ -676,8 +676,7 @@ void RobotSegmenter::FetchAndReinitializeRobotDescription(uint64_t generation)
         ack.data = std::to_string(generation) + "|" + get_fully_qualified_name();
         reload_ack_pub_->publish(ack);
         RCLCPP_INFO(
-          get_logger(), "Acknowledged robot-description generation %llu",
-          static_cast<unsigned long long>(generation));
+          get_logger(), "Acknowledged robot-description generation %" PRIu64, generation);
       } catch (const std::exception & e) {
         RCLCPP_ERROR(get_logger(), "Service call failed: %s", e.what());
       }

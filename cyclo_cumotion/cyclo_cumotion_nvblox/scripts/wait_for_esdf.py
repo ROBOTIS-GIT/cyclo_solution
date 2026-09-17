@@ -24,6 +24,7 @@ from rclpy.node import Node
 
 
 class EsdfReadinessProbe(Node):
+
     def __init__(self):
         super().__init__('wait_for_esdf')
         self._client = self.create_client(
