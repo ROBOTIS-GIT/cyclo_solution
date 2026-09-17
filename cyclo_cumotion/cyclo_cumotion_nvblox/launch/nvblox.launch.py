@@ -106,7 +106,7 @@ def launch_setup(context):
     selected_names = {
         'all': ['head', 'left', 'right'],
         'head': ['head'],
-        'right': ['left', 'right'],
+        'wrists': ['left', 'right'],
     }[camera_set]
     camera_topics = [camera_topics_by_name[name] for name in selected_names]
 
@@ -246,10 +246,10 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'use_sim_time', default_value='false', choices=['true', 'false']),
         DeclareLaunchArgument(
-            'camera_set', default_value='all', choices=['all', 'head', 'right'],
+            'camera_set', default_value='all', choices=['all', 'head', 'wrists'],
             description=(
-                'Use all depth cameras, only the head ZED, or only the right '
-                'wrist camera')),
+                'Use all depth cameras, only the head ZED, or only the'
+                'wrist cameras')),
         DeclareLaunchArgument(
             'robot_description_service_name',
             default_value='/cyclo_cumotion/nvblox/segmentation/get_robot_description',
