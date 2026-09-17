@@ -1,23 +1,35 @@
 # Cyclo Solution
 
-Cyclo Solution provides MoveIt 2 and Isaac ROS cuMotion integration for
-ROBOTIS FFW robots. Related packages are grouped under `cyclo_cumotion/`.
+This repository provides GPU-accelerated motion planning packages for the
+ROBOTIS Physical AI lineup. It currently integrates MoveIt 2, NVIDIA Isaac ROS
+cuMotion, and nvblox for FFW robots.
 
-## Packages
+## Repository Structure
 
-- `cyclo_cumotion_bringup`: integrated launch files
-- `cyclo_cumotion_description`: FFW planning model
-- `cyclo_cumotion_moveit_config`: MoveIt and cuMotion configuration
-- `cyclo_cumotion_nvblox`: multi-camera nvblox integration
-- `cyclo_cumotion_object_attachment`: predefined object attachment
-- `cyclo_cumotion_robot_segmenter`: robot removal from depth images
+```text
+├── cyclo_cumotion/
+│   ├── cyclo_cumotion_bringup/
+│   ├── cyclo_cumotion_description/
+│   ├── cyclo_cumotion_moveit_config/
+│   ├── cyclo_cumotion_nvblox/
+│   ├── cyclo_cumotion_object_attachment/
+│   └── cyclo_cumotion_robot_segmenter/
+└── docker/
+```
 
-The repository is mounted in the container at
-`/root/ros2_ws/src/cyclo_solution`. The Docker image also builds the
-`feature-cumotion` branch of
-[`robotis_interfaces`](https://github.com/ROBOTIS-GIT/robotis_interfaces).
+## Directory Description
 
-## Container
+- `cyclo_cumotion_bringup`: Integrated launch files.
+- `cyclo_cumotion_description`: FFW planning model.
+- `cyclo_cumotion_moveit_config`: MoveIt and cuMotion configuration.
+- `cyclo_cumotion_nvblox`: Multi-camera nvblox integration.
+- `cyclo_cumotion_object_attachment`: Predefined object attachment.
+- `cyclo_cumotion_robot_segmenter`: Robot removal from depth images.
+- `docker`: Container image and runtime scripts.
+
+## Install and Build
+
+Start the released Docker image and enter the container:
 
 ```bash
 cd cyclo_solution
@@ -25,15 +37,17 @@ cd cyclo_solution
 ./docker/container.sh enter
 ```
 
-`start` pulls `robotis/cyclo-solution:0.1.0` and starts a container that is
-automatically restarted after a host reboot. Build source changes inside the
-container with:
+Build the ROS 2 workspace inside the container:
 
 ```bash
 cb
 ```
 
-Rebuild the image only after changing the Dockerfile or system dependencies:
+The repository is mounted at `/root/ros2_ws/src/cyclo_solution`. The image
+also builds the `feature-cumotion` branch of
+[`robotis_interfaces`](https://github.com/ROBOTIS-GIT/robotis_interfaces).
+
+For Dockerfile or system dependency changes, build and start a local image:
 
 ```bash
 docker build -f docker/Dockerfile.amd64 \
@@ -44,30 +58,28 @@ CYCLO_SKIP_PULL=1 \
   ./docker/container.sh start
 ```
 
-## Run cuMotion
+## Run
 
-The robot bringup must already be running. Start cuMotion with:
+Start the robot bringup first, then launch cuMotion:
 
 ```bash
 ros2 launch cyclo_cumotion_bringup cumotion_moveit.launch.py
 ```
 
-Planning groups are `arm_l`, `arm_r`, `both_arms`, and `wholebody`. RViz is
-started by default.
+Available planning groups are `arm_l`, `arm_r`, `both_arms`, and `wholebody`.
+RViz starts by default.
 
-Common options:
+Common launch arguments:
 
-| Option | Description |
-| --- | --- |
-| `read_esdf_world:=true` | Enable nvblox collision checking |
-| `nvblox_camera_set:=all` | Use the ZED and both wrist depth cameras (default) |
-| `nvblox_camera_set:=head` | Use only the ZED |
-| `nvblox_camera_set:=right` | Use both wrist depth cameras (legacy option name) |
-| `enable_object_attachment:=true` | Enable predefined object attachment |
-| `enable_static_scene:=true` | Load the configured static collision scene |
-| `start_rviz:=false` | Run without RViz |
+| Argument | Default | Description |
+| --- | --- | --- |
+| `read_esdf_world` | `false` | Enable nvblox collision checking. |
+| `nvblox_camera_set` | `all` | Select `all`, `head`, or `wrists`. |
+| `enable_object_attachment` | `false` | Enable predefined object attachment. |
+| `enable_static_scene` | `false` | Load the configured static collision scene. |
+| `start_rviz` | `true` | Start RViz with the planning configuration. |
 
-Options can be combined. For example:
+Example with depth-based collision checking and object attachment:
 
 ```bash
 ros2 launch cyclo_cumotion_bringup cumotion_moveit.launch.py \
@@ -75,15 +87,12 @@ ros2 launch cyclo_cumotion_bringup cumotion_moveit.launch.py \
   enable_object_attachment:=true
 ```
 
-Planned robot motion and end-effector paths are shown in RViz. The
-end-effector line is removed after playback by default. Keep it with
-`planned_end_effector_path_auto_clear:=false`.
+Planned robot motion and end-effector paths are visualized in RViz.
 
-## Object attachment
+### Object Attachment
 
-Launch with `enable_object_attachment:=true`, then attach the catalog's
-`table_box`. Leaving `attachment_frame` empty uses its configured default,
-`end_effector_r_link`.
+The default catalog contains `table_box`. An empty `attachment_frame` uses its
+configured default, `end_effector_r_link`.
 
 ```bash
 ros2 service call \
@@ -96,21 +105,17 @@ ros2 service call \
   std_srvs/srv/Trigger '{}'
 ```
 
-Objects are configured in
-`cyclo_cumotion/cyclo_cumotion_object_attachment/config/predefined_objects.yaml`.
-
 ## Zenoh
 
 The repository does not set a remote Zenoh endpoint. Configure
-`ZENOH_CONFIG_OVERRIDE` in the container user's `.bashrc`, or run the local
+`ZENOH_CONFIG_OVERRIDE` in the container user's `.bashrc`, or start a local
 router with the `zenohd` alias.
-
-Stop and remove the container with `./docker/container.sh stop`.
 
 ## References
 
 - [Isaac ROS cuMotion MoveIt](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion_moveit/index.html)
 - [Isaac ROS Object Attachment](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion_object_attachment/index.html)
+- [ROBOTIS Docker Images](https://hub.docker.com/u/robotis)
 
 ## License
 
