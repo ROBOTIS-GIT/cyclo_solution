@@ -4,22 +4,16 @@
   <name>cyclo_cumotion_description</name>
   <version>0.1.0</version>
   <description>Planning robot models for the CYCLO cuMotion module.</description>
-
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
-
+  <url type="website">http://ai.robotis.com</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/cyclo_solution</url>
-
-  <author email="wwj@robotis.com">Woojin Wie</author>
-  <author email="wsh@robotis.com">Sungho Woo</author>
-  <author email="pyo@robotis.com">Pyo</author>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/cyclo_solution/issues</url>
   <author email="kyu@robotis.com">Yeonguk Kim</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
-
   <depend>urdf</depend>
   <exec_depend>realsense2_description</exec_depend>
   <exec_depend>xacro</exec_depend>
-
   <export>
     <build_type>ament_cmake</build_type>
   </export>

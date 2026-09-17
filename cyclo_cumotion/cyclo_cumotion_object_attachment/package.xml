@@ -4,16 +4,13 @@
   <name>cyclo_cumotion_object_attachment</name>
   <version>0.1.0</version>
   <description>Predefined-object integration for Isaac ROS cuMotion attachment.</description>
-
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
-
+  <url type="website">http://ai.robotis.com</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/cyclo_solution</url>
-
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/cyclo_solution/issues</url>
   <author email="kyu@robotis.com">Yeonguk Kim</author>
-
   <buildtool_depend>ament_cmake</buildtool_depend>
-
   <exec_depend>action_msgs</exec_depend>
   <exec_depend>isaac_ros_cumotion_interfaces</exec_depend>
   <exec_depend>isaac_ros_cumotion_object_attachment</exec_depend>
@@ -24,7 +21,6 @@
   <exec_depend>robotis_interfaces</exec_depend>
   <exec_depend>std_srvs</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
-
   <export>
     <build_type>ament_cmake</build_type>
   </export>
