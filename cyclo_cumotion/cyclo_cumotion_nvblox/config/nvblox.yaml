@@ -9,10 +9,6 @@
     use_color: false
     input_qos: SENSOR_DATA
     input_qos_depth: 10
-    # The robot segmenter intentionally removes the robot from depth images.
-    # Treat those unobserved voxels as free inside a bounded manipulation
-    # workspace; otherwise cuMotion sees the current robot pose as a world
-    # collision (the dense ESDF uses -1000 for unknown voxels by default).
     esdf_and_gradients_unobserved_value: 1.0
     static_mapper.unobserved_esdf_policy: kFree
     static_mapper.workspace_bounds_type: bounding_box
@@ -21,10 +17,7 @@
     static_mapper.workspace_bounds_min_height_m: -0.3
     static_mapper.workspace_bounds_max_corner_x_m: 2.5
     static_mapper.workspace_bounds_max_corner_y_m: 2.0
-    # Temporary ceiling at base_link z=1.2 m. Nvblox selects 0.24 m voxel
-    # blocks, so keep the bound just below 1.2 m to exclude the [1.2, 1.44)
-    # block instead of including it at the exact boundary.
-    static_mapper.workspace_bounds_max_height_m: 1.159
+    static_mapper.workspace_bounds_max_height_m: 1.5
     static_mapper.projective_integrator_max_integration_distance_m: 2.5
     static_mapper.esdf_integrator_max_distance_m: 1.0
     # Nvblox 4.6 aborts in its masked multi-camera path when internal depth
