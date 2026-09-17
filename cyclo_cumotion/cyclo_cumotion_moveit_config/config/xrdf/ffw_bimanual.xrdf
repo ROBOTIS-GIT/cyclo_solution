@@ -1,0 +1,691 @@
+format: xrdf
+format_version: 2.0
+modifiers:
+- add_frame:
+    frame_name: attached_object
+    parent_frame_name: end_effector_r_link
+    joint_name: attached_object_joint
+    joint_type: FIXED
+    fixed_transform:
+      position: [0.0, 0.0, 0.0]
+      orientation: {w: 1.0, xyz: [0.0, 0.0, 0.0]}
+default_joint_positions:
+  lift_joint: -0.2
+  left_wheel_steer: 0.0
+  right_wheel_steer: 0.0
+  rear_wheel_steer: 0.0
+  arm_l_joint1: 0.431
+  arm_r_joint1: 0.431
+  head_joint1: 0.0007
+  arm_l_joint2: 0.304
+  arm_r_joint2: -0.304
+  head_joint2: -0.0
+  arm_l_joint3: 0.152
+  arm_r_joint3: -0.152
+  arm_l_joint4: -2.457
+  arm_r_joint4: -2.457
+  arm_l_joint5: -0.267
+  arm_r_joint5: 0.267
+  arm_l_joint6: 0.686
+  arm_r_joint6: 0.686
+  arm_l_joint7: -0.948
+  arm_r_joint7: 0.948
+  gripper_l_joint1: 0.0
+  gripper_r_joint1: 0.0
+cspace:
+  joint_names:
+  - arm_l_joint1
+  - arm_l_joint2
+  - arm_l_joint3
+  - arm_l_joint4
+  - arm_l_joint5
+  - arm_l_joint6
+  - arm_l_joint7
+  - arm_r_joint1
+  - arm_r_joint2
+  - arm_r_joint3
+  - arm_r_joint4
+  - arm_r_joint5
+  - arm_r_joint6
+  - arm_r_joint7
+  acceleration_limits:
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  - 10.0
+  jerk_limits:
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+  - 10000.0
+tool_frames:
+- end_effector_l_link
+- end_effector_r_link
+world_collision:
+  geometry: auto_generated_collision_sphere_group
+self_collision:
+  geometry: auto_generated_collision_sphere_group
+  ignore:
+    base_link:
+    - arm_base_link
+    arm_base_link:
+    - arm_l_link1
+    - arm_r_link1
+    - head_link1
+    - head_link2
+    arm_l_link1:
+    - arm_l_link2
+    - arm_r_link1
+    - head_link1
+    arm_l_link2:
+    - arm_l_link3
+    arm_l_link3:
+    - arm_l_link4
+    arm_l_link4:
+    - arm_l_link5
+    arm_l_link5:
+    - arm_l_link6
+    - arm_l_link7
+    arm_l_link6:
+    - arm_l_link7
+    - gripper_l_rh_p12_rn_r1
+    - gripper_l_rh_p12_rn_l1
+    - gripper_l_rh_p12_rn_r2
+    - gripper_l_rh_p12_rn_l2
+    arm_l_link7:
+    - gripper_l_rh_p12_rn_r1
+    - gripper_l_rh_p12_rn_l1
+    gripper_l_rh_p12_rn_r1:
+    - gripper_l_rh_p12_rn_r2
+    - gripper_l_rh_p12_rn_l1
+    gripper_l_rh_p12_rn_l1:
+    - gripper_l_rh_p12_rn_l2
+    - gripper_l_rh_p12_rn_r2
+    gripper_l_rh_p12_rn_l2:
+    - gripper_l_rh_p12_rn_r1
+    - gripper_l_rh_p12_rn_r2
+    arm_r_link1:
+    - arm_r_link2
+    - head_link1
+    arm_r_link2:
+    - arm_r_link3
+    arm_r_link3:
+    - arm_r_link4
+    arm_r_link4:
+    - arm_r_link5
+    arm_r_link5:
+    - arm_r_link6
+    - arm_r_link7
+    arm_r_link6:
+    - arm_r_link7
+    - gripper_r_rh_p12_rn_r1
+    - gripper_r_rh_p12_rn_l1
+    - gripper_r_rh_p12_rn_r2
+    - gripper_r_rh_p12_rn_l2
+    arm_r_link7:
+    - gripper_r_rh_p12_rn_r1
+    - gripper_r_rh_p12_rn_l1
+    gripper_r_rh_p12_rn_r1:
+    - gripper_r_rh_p12_rn_r2
+    - gripper_r_rh_p12_rn_l1
+    gripper_r_rh_p12_rn_l1:
+    - gripper_r_rh_p12_rn_l2
+    - gripper_r_rh_p12_rn_r2
+    gripper_r_rh_p12_rn_l2:
+    - gripper_r_rh_p12_rn_r1
+    - gripper_r_rh_p12_rn_r2
+    head_link1:
+    - head_link2
+geometry:
+  auto_generated_collision_sphere_group:
+    spheres:
+      head_link2:
+      - center:
+        - -0.056
+        - 0.002
+        - -0.016
+        radius: 0.0486
+      - center:
+        - 0.025
+        - 0.049
+        - -0.019
+        radius: 0.0471
+      - center:
+        - 0.027
+        - -0.05
+        - -0.02
+        radius: 0.0471
+      - center:
+        - 0.026
+        - -0.001
+        - -0.019
+        radius: 0.0471
+      - center:
+        - -0.012
+        - 0.002
+        - -0.017
+        radius: 0.0478
+      - center:
+        - -0.024
+        - -0.043
+        - -0.01
+        radius: 0.0412
+      - center:
+        - -0.02
+        - 0.047
+        - -0.01
+        radius: 0.0386
+      arm_base_link:
+      - center:
+        - 0.002
+        - 0.002
+        - -0.06
+        radius: 0.1553
+      - center:
+        - -0.016
+        - 0.0
+        - -0.199
+        radius: 0.1053
+      - center:
+        - -0.004
+        - 0.1
+        - 0.006
+        radius: 0.0753
+      - center:
+        - -0.006
+        - -0.107
+        - -0.001
+        radius: 0.0753
+      - center:
+        - -0.004
+        - -0.07
+        - -0.158
+        radius: 0.0753
+      - center:
+        - -0.001
+        - 0.072
+        - -0.15
+        radius: 0.0753
+      arm_r_link1:
+      - center:
+        - 0.053
+        - -0.123
+        - 0.003
+        radius: 0.0552
+      - center:
+        - -0.027
+        - -0.119
+        - -0.001
+        radius: 0.0552
+      - center:
+        - 0.013
+        - -0.121
+        - 0.001
+        radius: 0.0552
+      arm_l_link1:
+      - center:
+        - 0.054
+        - 0.122
+        - 0.001
+        radius: 0.0552
+      - center:
+        - -0.027
+        - 0.117
+        - -0.001
+        radius: 0.0552
+      - center:
+        - 0.013
+        - 0.12
+        - 0.0
+        radius: 0.0552
+      arm_l_link2:
+      - center:
+        - 0.004
+        - 0.001
+        - -0.194
+        radius: 0.0552
+      - center:
+        - -0.001
+        - 0.0
+        - -0.079
+        radius: 0.0552
+      - center:
+        - 0.002
+        - 0.001
+        - -0.156
+        radius: 0.0552
+      - center:
+        - 0.001
+        - 0.0
+        - -0.117
+        radius: 0.0552
+      arm_r_link2:
+      - center:
+        - 0.002
+        - -0.002
+        - -0.197
+        radius: 0.0552
+      - center:
+        - -0.001
+        - -0.001
+        - -0.079
+        radius: 0.0552
+      - center:
+        - 0.001
+        - -0.002
+        - -0.158
+        radius: 0.0552
+      - center:
+        - 0.0
+        - -0.001
+        - -0.118
+        radius: 0.0552
+      arm_r_link3:
+      - center:
+        - 0.04
+        - 0.014
+        - -0.13
+        radius: 0.0538
+      - center:
+        - 0.036
+        - -0.041
+        - -0.13
+        radius: 0.0538
+      arm_l_link3:
+      - center:
+        - 0.038
+        - 0.044
+        - -0.132
+        radius: 0.0538
+      - center:
+        - 0.038
+        - -0.012
+        - -0.131
+        radius: 0.0538
+      arm_l_link4:
+      - center:
+        - -0.04
+        - -0.001
+        - -0.089
+        radius: 0.0535
+      - center:
+        - -0.044
+        - 0.0
+        - -0.157
+        radius: 0.0535
+      arm_r_link4:
+      - center:
+        - -0.042
+        - 0.001
+        - -0.087
+        radius: 0.0535
+      - center:
+        - -0.038
+        - 0.003
+        - -0.159
+        radius: 0.0535
+      arm_r_link5:
+      - center:
+        - -0.007
+        - 0.024
+        - -0.107
+        radius: 0.0535
+      - center:
+        - 0.009
+        - -0.043
+        - -0.111
+        radius: 0.0535
+      - center:
+        - 0.001
+        - -0.002
+        - -0.083
+        radius: 0.0535
+      arm_l_link5:
+      - center:
+        - 0.005
+        - -0.019
+        - -0.105
+        radius: 0.0535
+      - center:
+        - -0.001
+        - 0.044
+        - -0.109
+        radius: 0.0535
+      - center:
+        - -0.001
+        - 0.004
+        - -0.076
+        radius: 0.0535
+      arm_l_link6:
+      - center:
+        - -0.0
+        - 0.003
+        - -0.087
+        radius: 0.0592
+      - center:
+        - 0.008
+        - -0.001
+        - -0.13
+        radius: 0.0584
+      arm_r_link6:
+      - center:
+        - 0.0
+        - -0.003
+        - -0.086
+        radius: 0.0592
+      - center:
+        - 0.008
+        - 0.001
+        - -0.135
+        radius: 0.0584
+      arm_r_link7:
+      - center:
+        - 0.025
+        - -0.005
+        - -0.045
+        radius: 0.0434
+      - center:
+        - -0.013
+        - -0.004
+        - -0.046
+        radius: 0.0434
+      - center:
+        - 0.002
+        - 0.007
+        - -0.104
+        radius: 0.0601
+      - center:
+        - 0.072
+        - 0.0
+        - -0.061
+        radius: 0.0234
+      - center:
+        - 0.108
+        - -0.0
+        - -0.066
+        radius: 0.0284
+      - center:
+        - 0.008
+        - 0.002
+        - -0.101
+        radius: 0.0401
+      arm_l_link7:
+      - center:
+        - 0.031
+        - -0.001
+        - -0.05
+        radius: 0.0434
+      - center:
+        - -0.021
+        - -0.001
+        - -0.044
+        radius: 0.0434
+      - center:
+        - -0.0
+        - -0.001
+        - -0.103
+        radius: 0.0601
+      - center:
+        - 0.107
+        - -0.0
+        - -0.067
+        radius: 0.0284
+      - center:
+        - 0.074
+        - 0.0
+        - -0.059
+        radius: 0.0234
+      - center:
+        - 0.003
+        - -0.001
+        - -0.104
+        radius: 0.0401
+      base_link:
+      - center:
+        - 0.108
+        - -0.238
+        - 0.181
+        radius: 0.201
+      - center:
+        - -0.282
+        - -0.205
+        - 0.187
+        radius: 0.201
+      - center:
+        - -0.272
+        - 0.173
+        - 0.165
+        radius: 0.201
+      - center:
+        - 0.132
+        - 0.254
+        - 0.167
+        radius: 0.2064
+      - center:
+        - -0.022
+        - -0.227
+        - 0.183
+        radius: 0.201
+      - center:
+        - -0.152
+        - -0.216
+        - 0.185
+        radius: 0.201
+      - center:
+        - 0.116
+        - -0.076
+        - 0.177
+        radius: 0.2028
+      - center:
+        - 0.124
+        - 0.088
+        - 0.172
+        radius: 0.2046
+      - center:
+        - -0.138
+        - 0.2
+        - 0.166
+        radius: 0.2028
+      - center:
+        - -0.004
+        - 0.226
+        - 0.166
+        radius: 0.2046
+      - center:
+        - -0.277
+        - -0.016
+        - 0.176
+        radius: 0.201
+      - center:
+        - -0.146
+        - -0.036
+        - 0.176
+        radius: 0.2016
+      - center:
+        - -0.016
+        - -0.056
+        - 0.176
+        radius: 0.2022
+      - center:
+        - -0.077
+        - 0.036
+        - 0.174
+        radius: 0.2028
+      - center:
+        - -0.136
+        - 0.001
+        - 1.491
+        radius: 0.0948
+      - center:
+        - -0.136
+        - -0.001
+        - 0.629
+        radius: 0.0948
+      - center:
+        - -0.136
+        - 0.001
+        - 1.383
+        radius: 0.0948
+      - center:
+        - -0.136
+        - 0.001
+        - 1.275
+        radius: 0.0948
+      - center:
+        - -0.136
+        - 0.0
+        - 1.167
+        radius: 0.0948
+      - center:
+        - -0.136
+        - 0.0
+        - 1.06
+        radius: 0.0948
+      - center:
+        - -0.136
+        - -0.0
+        - 0.952
+        radius: 0.0948
+      - center:
+        - -0.136
+        - -0.0
+        - 0.844
+        radius: 0.0948
+      - center:
+        - -0.136
+        - -0.0
+        - 0.736
+        radius: 0.0948
+      - center:
+        - -0.153
+        - 0.0
+        - 0.439
+        radius: 0.1748
+      gripper_l_rh_p12_rn_r1:
+      - center:
+        - 0.003
+        - 0.029
+        - -0.009
+        radius: 0.03
+      - center:
+        - -0.002
+        - 0.048
+        - 0.021
+        radius: 0.03
+      - center:
+        - -0.0
+        - 0.04
+        - 0.006
+        radius: 0.03
+      gripper_l_rh_p12_rn_l1:
+      - center:
+        - 0.001
+        - -0.034
+        - -0.004
+        radius: 0.03
+      - center:
+        - -0.001
+        - -0.05
+        - 0.022
+        radius: 0.03
+      - center:
+        - -0.0
+        - -0.042
+        - 0.009
+        radius: 0.03
+      gripper_l_rh_p12_rn_r2:
+      - center:
+        - 0.001
+        - 0.003
+        - 0.03
+        radius: 0.0207
+      - center:
+        - -0.001
+        - 0.006
+        - 0.005
+        radius: 0.0196
+      gripper_l_rh_p12_rn_l2:
+      - center:
+        - 0.0
+        - -0.004
+        - 0.034
+        radius: 0.0207
+      - center:
+        - 0.001
+        - -0.009
+        - 0.009
+        radius: 0.0196
+      gripper_r_rh_p12_rn_r1:
+      - center:
+        - -0.002
+        - 0.032
+        - -0.004
+        radius: 0.03
+      - center:
+        - -0.001
+        - 0.052
+        - 0.021
+        radius: 0.03
+      - center:
+        - -0.002
+        - 0.042
+        - 0.008
+        radius: 0.03
+      gripper_r_rh_p12_rn_l1:
+      - center:
+        - -0.002
+        - -0.048
+        - 0.02
+        radius: 0.03
+      - center:
+        - -0.003
+        - -0.032
+        - -0.004
+        radius: 0.03
+      - center:
+        - -0.003
+        - -0.04
+        - 0.008
+        radius: 0.03
+      gripper_r_rh_p12_rn_r2:
+      - center:
+        - 0.002
+        - 0.003
+        - 0.031
+        radius: 0.0207
+      - center:
+        - 0.002
+        - 0.01
+        - 0.006
+        radius: 0.0196
+      gripper_r_rh_p12_rn_l2:
+      - center:
+        - 0.001
+        - 0.001
+        - 0.03
+        radius: 0.0207
+      - center:
+        - 0.003
+        - -0.008
+        - 0.008
+        radius: 0.0196

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>cyclo_cumotion_nvblox</name>
+  <version>0.1.0</version>
+  <description>Robot-segmented multi-camera nvblox integration for CYCLO cuMotion.</description>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">http://ai.robotis.com</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/cyclo_solution</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/cyclo_solution/issues</url>
+  <author email="kyu@robotis.com">Yeonguk Kim</author>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>cyclo_cumotion_description</exec_depend>
+  <exec_depend>cyclo_cumotion_moveit_config</exec_depend>
+  <exec_depend>cyclo_cumotion_robot_segmenter</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>isaac_ros_cumotion_interfaces</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>nvblox_ros</exec_depend>
+  <exec_depend>nvblox_msgs</exec_depend>
+  <exec_depend>rclcpp_components</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

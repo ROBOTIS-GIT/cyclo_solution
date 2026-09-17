@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>cyclo_cumotion_moveit_config</name>
+  <version>0.1.0</version>
+  <description>MoveIt and cuMotion configuration for CYCLO-supported FFW robots.</description>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">http://ai.robotis.com</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/cyclo_solution</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/cyclo_solution/issues</url>
+  <author email="kyu@robotis.com">Yeonguk Kim</author>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>cyclo_cumotion_description</exec_depend>
+  <depend>geometry_msgs</depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>moveit_ros_move_group</exec_depend>
+  <depend>moveit_kinematics</depend>
+  <depend>moveit_core</depend>
+  <depend>moveit_msgs</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>tf2_eigen</depend>
+  <exec_depend>moveit_simple_controller_manager</exec_depend>
+  <exec_depend>moveit_configs_utils</exec_depend>
+  <exec_depend>moveit_ros_visualization</exec_depend>
+  <exec_depend>isaac_ros_cumotion</exec_depend>
+  <exec_depend>isaac_ros_cumotion_interfaces</exec_depend>
+  <exec_depend>isaac_ros_cumotion_moveit</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>robotis_interfaces</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

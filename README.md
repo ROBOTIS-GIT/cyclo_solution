@@ -1,133 +1,42 @@
 # Cyclo Solution
 
-Cyclo Solution contains modular Isaac ROS applications for ROBOTIS robots. The
-current `cyclo_cumotion` module integrates MoveIt 2, Isaac ROS cuMotion, nvblox,
-and moving-camera robot segmentation for FFW robots.
+Cyclo Solution provides modular ROS 2 solution packages for ROBOTIS Physical
+AI systems. Each solution is organized as a feature group so that perception,
+planning, and manipulation capabilities can be added independently.
 
-The repository is bind-mounted at `/root/ros2_ws/src/cyclo_solution` so source
-changes are immediately available in the development container.
+## Prerequisites
 
-## Packages
+Cyclo Solution follows the
+[NVIDIA Isaac ROS system requirements](https://nvidia-isaac-ros.github.io/getting_started/index.html#system-requirements),
+including its supported NVIDIA GPU, operating system, driver, Docker, and
+NVIDIA Container Toolkit requirements.
 
-- `cyclo_cumotion`: module bringup and feature meta-package
-- `cyclo_cumotion_description`: common FFW planning robot description
-- `cyclo_cumotion_moveit_config`: MoveIt, cuMotion, and XRDF configuration
-- `cyclo_cumotion_nvblox`: robot-segmented nvblox integration
-- `cyclo_cumotion_object_attachment`: predefined-object attachment integration
-- `cyclo_cumotion_robot_segmenter`: moving-camera robot segmenter
+## Available Solutions
 
-The cuMotion-specific message and service definitions are provided by the
-`feature-cumotion` branch of
-[`robotis_interfaces`](https://github.com/ROBOTIS-GIT/robotis_interfaces).
-The development image clones and builds that branch together with this
-repository.
+### cuMotion
 
-## Development container
+The [`cyclo_cumotion`](cyclo_cumotion) feature group provides GPU-accelerated
+motion planning for the AI Worker FFW platform using MoveIt 2 and NVIDIA Isaac
+ROS cuMotion.
 
-```bash
-cd cyclo_solution/docker
-./container.sh start
-./container.sh enter
-```
+It includes:
 
-The image uses ROS 2 Jazzy and Isaac ROS 4.6. The single amd64 Dockerfile can
-reuse `robotis/cyclo-solution:4.6-local` as a prebuilt dependency base when it
-is available, so CUDA and Isaac ROS packages are not rebuilt unnecessarily.
+- GPU-accelerated single-arm, dual-arm, and whole-body motion planning
+- Depth-aware collision mapping and robot segmentation
+- Object attachment and RViz trajectory visualization
 
-Build the workspace inside the container:
+Setup instructions and usage examples are provided in the
+[Isaac cuMotion guide](https://docs.robotis.com/docs/systems/aiworker/resources/technical_story/isaac_cumotion/).
 
-```bash
-cb
-```
+## Planned Features
 
-Only Dockerfile or system dependency changes require an image rebuild.
+Future releases will add more feature-oriented solution groups, including:
 
-## cuMotion planning
+- Perception and object-understanding pipelines
+- Reusable manipulation and task-execution workflows
+- Support for additional ROBOTIS Physical AI platforms and sensor configurations
 
-Launch the common FFW planning model:
+## License
 
-```bash
-ros2 launch cyclo_cumotion cumotion_moveit.launch.py
-```
-
-The model shares the lift, arms, grippers, planning groups, and collision
-spheres across FFW variants. The common URDF also contains the SG2 swerve-wheel
-joints and visual links so full SG2 joint-state messages are valid. On BG2,
-those joints remain at their zero defaults and are outside every planning
-group and the cuMotion collision-sphere model.
-
-Available MoveIt planning groups are `arm_l`, `arm_r`, `both_arms`, and
-`wholebody`. A single cuMotion backend is reconfigured by the group router when
-the selected group changes.
-
-Depth-based world collision checking is disabled by default. Enable it with:
-
-```bash
-ros2 launch cyclo_cumotion cumotion_moveit.launch.py \
-  read_esdf_world:=true
-```
-
-A static MoveIt scene can be enabled independently:
-
-```bash
-ros2 launch cyclo_cumotion cumotion_moveit.launch.py \
-  enable_static_scene:=true
-```
-
-Object attachment is disabled by default. Enable the NVIDIA attachment node
-and predefined-object catalog together with cuMotion using:
-
-```bash
-ros2 launch cyclo_cumotion cumotion_moveit.launch.py \
-  enable_object_attachment:=true
-```
-
-Attach the catalog's `small_box` to either gripper. An empty
-`attachment_frame` uses the object's configured default:
-
-```bash
-ros2 service call \
-  /cyclo_cumotion/object_attachment/attach_by_name \
-  robotis_interfaces/srv/AttachObjectByName \
-  "{object_name: small_box, attachment_frame: end_effector_l_link}"
-ros2 service call \
-  /cyclo_cumotion/object_attachment/detach std_srvs/srv/Trigger '{}'
-```
-
-Objects are defined in
-`cyclo_cumotion_object_attachment/config/predefined_objects.yaml`. Attached
-collision spheres and the selected left/right attachment frame are preserved
-when switching between `arm_l`, `arm_r`, `both_arms`, and `wholebody`.
-
-No perception topic or CenterPose gateway is started. The
-`robotis_interfaces/AttachmentGeometry` message remains as the neutral
-geometry contract for a future perception adapter; the current runtime only
-accepts catalog object names.
-
-## Zenoh
-
-Docker Compose does not start a Zenoh router. Start one explicitly with the
-`zenohd` alias when a local router is required. No `ZENOH_CONFIG_OVERRIDE` is
-set by the Dockerfile or Compose configuration.
-
-When a remote router is required, set `ZENOH_CONFIG_OVERRIDE` explicitly in the
-container user's `.bashrc`. The endpoint is intentionally not stored in this
-repository.
-
-Stop and remove the module containers with:
-
-```bash
-./container.sh stop
-```
-
-## References
-
-- [Isaac ROS Getting Started](https://nvidia-isaac-ros.github.io/getting_started/index.html)
-- [Isaac ROS cuMotion MoveIt](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion_moveit/index.html)
-- [Isaac ROS cuMotion Object Attachment](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion_object_attachment/index.html)
-
-## License and attribution
-
-This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
-`cyclo_cumotion_robot_segmenter` contains modifications derived from NVIDIA
-Isaac ROS cuMotion. See [NOTICE](NOTICE) for attribution.
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE)
+and [NOTICE](NOTICE) for details.

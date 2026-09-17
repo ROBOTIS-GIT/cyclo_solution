@@ -1,0 +1,38 @@
+/**:
+  ros__parameters:
+    global_frame: base_link
+    mapping_type: static_tsdf
+    esdf_mode: 3d
+    voxel_size: 0.03
+    num_cameras: 3
+    use_tf_transforms: true
+    use_color: false
+    input_qos: SENSOR_DATA
+    input_qos_depth: 10
+    esdf_and_gradients_unobserved_value: 1.0
+    static_mapper.unobserved_esdf_policy: kFree
+    static_mapper.workspace_bounds_type: bounding_box
+    static_mapper.workspace_bounds_min_corner_x_m: -1.0
+    static_mapper.workspace_bounds_min_corner_y_m: -2.0
+    static_mapper.workspace_bounds_min_height_m: -0.3
+    static_mapper.workspace_bounds_max_corner_x_m: 2.5
+    static_mapper.workspace_bounds_max_corner_y_m: 2.0
+    static_mapper.workspace_bounds_max_height_m: 1.5
+    static_mapper.projective_integrator_max_integration_distance_m: 2.5
+    static_mapper.esdf_integrator_max_distance_m: 1.0
+    # Nvblox 4.6 aborts in its masked multi-camera path when internal depth
+    # preprocessing rebuilds an image whose dimensions differ from the mask.
+    # Keep filtering in the camera drivers until that upstream path is fixed.
+    static_mapper.do_depth_preprocessing: false
+    # Keep low-confidence TSDF observations visible for diagnosis, but do not
+    # promote them into the ESDF used by cuMotion until weight accumulates.
+    layer_visualization_min_tsdf_weight: 1.0
+    static_mapper.esdf_integrator_min_weight: 1.0
+    # Keep the static scene persistent. The nvblox default decays TSDF at
+    # 5 Hz, which removes blocks whenever robot-filtered depth is intermittent.
+    decay_tsdf_rate_hz: 0.0
+    update_esdf_rate_hz: 5.0
+    update_mesh_rate_hz: 2.0
+    publish_esdf_distance_slice: true
+    esdf_slice_bounds_visualization_attachment_frame_id: base_link
+    esdf_slice_bounds_visualization_side_length: 3.0
