@@ -1,11 +1,9 @@
-name: cyclo_solution
-
 services:
   cyclo_solution:
     container_name: cyclo_solution
     image: ${CYCLO_IMAGE:-robotis/cyclo-solution:0.1.0}
     tty: true
-    restart: unless-stopped
+    restart: always
     cap_add:
       - SYS_NICE
     ulimits:

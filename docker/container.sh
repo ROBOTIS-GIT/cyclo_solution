@@ -1,29 +1,14 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the directory where the script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CONTAINER_NAME="cyclo_solution"
 DEFAULT_IMAGE="robotis/cyclo-solution:0.1.0"
 IMAGE_NAME="${CYCLO_IMAGE:-${DEFAULT_IMAGE}}"
+GITHUB_RELEASES_API="https://api.github.com/repos/ROBOTIS-GIT/cyclo_solution/releases/latest"
+VERSION_PACKAGE_XML="${SCRIPT_DIR}/../cyclo_cumotion/cyclo_cumotion_bringup/package.xml"
 
-configure_x11() {
-    if [ -z "${DISPLAY:-}" ]; then
-        echo "Warning: DISPLAY is not set. GUI applications will not be available."
-        return 0
-    fi
-
-    if ! command -v xhost >/dev/null 2>&1; then
-        echo "Warning: xhost is not installed on the host. GUI authorization was not configured."
-        return 0
-    fi
-
-    # The container runs as root. Reapply this permission for every host login
-    # session because Xwayland authentication is regenerated after logout/reboot,
-    # while Docker may restart the container automatically.
-    if ! xhost +si:localuser:root >/dev/null; then
-        echo "Warning: Failed to authorize container GUI access for DISPLAY=${DISPLAY}."
-    fi
-}
-
+# Function to display help
 show_help() {
     echo "Usage: $0 [command]"
     echo ""
@@ -42,8 +27,66 @@ show_help() {
     echo "  CYCLO_IMAGE=<tag> CYCLO_SKIP_PULL=1 $0 start"
 }
 
+get_current_version() {
+    local version=""
+    if [ -f "${VERSION_PACKAGE_XML}" ]; then
+        version=$(sed -n \
+            's/.*<version>\([^<]*\)<\/version>.*/\1/p' \
+            "${VERSION_PACKAGE_XML}" | head -1)
+    fi
+    echo "${version:-unknown}"
+}
+
+get_latest_version() {
+    local response tag
+    response=$(curl -sL --connect-timeout 5 "${GITHUB_RELEASES_API}" 2>/dev/null)
+    tag=$(echo "${response}" | sed -n \
+        's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)
+    echo "${tag#v}"
+}
+
+update_available() {
+    local current_version="$1"
+    local latest_version="$2"
+    local newer_version
+
+    if [ -z "${latest_version}" ] || [ "${latest_version}" = "${current_version}" ]; then
+        return 1
+    fi
+    newer_version=$(printf '%s\n%s\n' \
+        "${current_version}" "${latest_version}" | sort -V | tail -1)
+    [ "${newer_version}" = "${latest_version}" ]
+}
+
+print_update_notice() {
+    local current_version="$1"
+    local latest_version="$2"
+
+    echo ""
+    echo "New Cyclo Solution release available: ${latest_version} (current: ${current_version})"
+    echo "Update the repository, then restart the container to use the new release."
+    echo ""
+}
+
+check_for_update() {
+    local current_version latest_version
+
+    current_version=$(get_current_version)
+    latest_version=$(get_latest_version)
+    if update_available "${current_version}" "${latest_version}"; then
+        print_update_notice "${current_version}" "${latest_version}"
+    fi
+}
+
+# Function to start the container
 start_container() {
-    configure_x11
+    # Set up X11 forwarding only if DISPLAY is set
+    if [ -n "$DISPLAY" ]; then
+        echo "Setting up X11 forwarding..."
+        xhost +local:docker || true
+    else
+        echo "Warning: DISPLAY environment variable is not set. X11 forwarding will not be available."
+    fi
 
     case "$(uname -m)" in
         x86_64|amd64) ;;
@@ -51,6 +94,10 @@ start_container() {
     esac
 
     echo "Starting cyclo_solution with ${IMAGE_NAME}..."
+
+    if [ "${CYCLO_SKIP_PULL:-0}" != "1" ] && [ "${IMAGE_NAME}" = "${DEFAULT_IMAGE}" ]; then
+        check_for_update
+    fi
 
     if [ "${CYCLO_SKIP_PULL:-0}" = "1" ]; then
         if ! docker image inspect "${IMAGE_NAME}" >/dev/null 2>&1; then
@@ -67,24 +114,36 @@ start_container() {
         docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
 }
 
+# Function to enter the container
 enter_container() {
-    configure_x11
+    # Set up X11 forwarding only if DISPLAY is set
+    if [ -n "$DISPLAY" ]; then
+        echo "Setting up X11 forwarding..."
+        xhost +local:docker || true
+    else
+        echo "Warning: DISPLAY environment variable is not set. X11 forwarding will not be available."
+    fi
 
     if ! docker ps --format '{{.Names}}' | grep -qx "${CONTAINER_NAME}"; then
         echo "Error: Container is not running"
         return 1
     fi
 
+    if [ "${CYCLO_IMAGE:-${DEFAULT_IMAGE}}" = "${DEFAULT_IMAGE}" ]; then
+        check_for_update
+    fi
+
     docker exec -it "${CONTAINER_NAME}" bash
 }
 
+# Function to stop the container
 stop_container() {
     if ! docker ps --format '{{.Names}}' | grep -qx "${CONTAINER_NAME}"; then
         echo "Error: Container is not running"
         return 1
     fi
 
-    echo "Warning: This will stop and remove the container."
+    echo "Warning: This will stop and remove the container. All unsaved data in the container will be lost."
     read -p "Are you sure you want to continue? [y/N] " -n 1 -r
     echo
     if [[ ${REPLY} =~ ^[Yy]$ ]]; then
@@ -94,11 +153,20 @@ stop_container() {
     fi
 }
 
-case "${1:-}" in
-    help) show_help ;;
-    start) start_container ;;
-    enter) enter_container ;;
-    stop) stop_container ;;
+# Main command handling
+case "$1" in
+    "help")
+        show_help
+        ;;
+    "start")
+        start_container
+        ;;
+    "enter")
+        enter_container
+        ;;
+    "stop")
+        stop_container
+        ;;
     *)
         echo "Error: Unknown command"
         show_help
