@@ -3,8 +3,6 @@
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CONTAINER_NAME="cyclo_solution"
-DEFAULT_IMAGE="robotis/cyclo-solution:0.1.0"
-IMAGE_NAME="${CYCLO_IMAGE:-${DEFAULT_IMAGE}}"
 GITHUB_RELEASES_API="https://api.github.com/repos/ROBOTIS-GIT/cyclo_solution/releases/latest"
 VERSION_PACKAGE_XML="${SCRIPT_DIR}/../cyclo_cumotion/cyclo_cumotion_bringup/package.xml"
 
@@ -22,9 +20,6 @@ show_help() {
     echo "  $0 start                Pull and start the released image"
     echo "  $0 enter                Enter the running container"
     echo "  $0 stop                 Stop the container"
-    echo ""
-    echo "Local image override:"
-    echo "  CYCLO_IMAGE=<tag> CYCLO_SKIP_PULL=1 $0 start"
 }
 
 get_current_version() {
@@ -93,25 +88,11 @@ start_container() {
         *) echo "Error: This environment currently supports x86_64 only."; return 1 ;;
     esac
 
-    echo "Starting cyclo_solution with ${IMAGE_NAME}..."
+    echo "Starting cyclo_solution container..."
+    check_for_update
 
-    if [ "${CYCLO_SKIP_PULL:-0}" != "1" ] && [ "${IMAGE_NAME}" = "${DEFAULT_IMAGE}" ]; then
-        check_for_update
-    fi
-
-    if [ "${CYCLO_SKIP_PULL:-0}" = "1" ]; then
-        if ! docker image inspect "${IMAGE_NAME}" >/dev/null 2>&1; then
-            echo "Error: Local image '${IMAGE_NAME}' was not found."
-            return 1
-        fi
-        echo "Using local image without pulling."
-    else
-        CYCLO_IMAGE="${IMAGE_NAME}" \
-            docker compose -f "${SCRIPT_DIR}/docker-compose.yml" pull || return 1
-    fi
-
-    CYCLO_IMAGE="${IMAGE_NAME}" \
-        docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
+    docker compose -f "${SCRIPT_DIR}/docker-compose.yml" pull || return 1
+    docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
 }
 
 # Function to enter the container
@@ -129,9 +110,7 @@ enter_container() {
         return 1
     fi
 
-    if [ "${CYCLO_IMAGE:-${DEFAULT_IMAGE}}" = "${DEFAULT_IMAGE}" ]; then
-        check_for_update
-    fi
+    check_for_update
 
     docker exec -it "${CONTAINER_NAME}" bash
 }

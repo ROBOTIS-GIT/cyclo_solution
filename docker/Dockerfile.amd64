@@ -40,8 +40,6 @@ RUN mkdir -p /etc/isaac-ros-cli && \
 
 RUN apt-mark unhold libcublas-13-2 libcublas-dev-13-2 2>/dev/null || true
 
-# Install the binary dependencies needed by the local cuMotion packages. The
-# full isaac_ros_manipulation workflow is intentionally not installed.
 RUN apt-get update && \
     apt-get -o Dpkg::Options::="--force-confold" install -y --no-install-recommends \
       python3-colcon-common-extensions \
@@ -66,17 +64,10 @@ RUN apt-get update && \
 ENV COLCON_WS=/root/ros2_ws
 WORKDIR ${COLCON_WS}
 
-RUN mkdir -p ${COLCON_WS}/src/cyclo_solution
-
-# Clone external ROS interfaces separately so this repository does not carry a
-# second copy of robotis_interfaces.
-RUN git clone --branch feature-cumotion --single-branch --depth 1 \
-      https://github.com/ROBOTIS-GIT/robotis_interfaces.git \
-      ${COLCON_WS}/src/robotis_interfaces
-
-# Match AI Worker's development layout. At runtime docker-compose bind-mounts
-# the host repository over this path, while build/install remain in the workspace.
-COPY . ${COLCON_WS}/src/cyclo_solution/
+RUN mkdir -p ${COLCON_WS}/src && \
+    cd ${COLCON_WS}/src && \
+    git clone -b main https://github.com/ROBOTIS-GIT/cyclo_solution.git && \
+    git clone -b jazzy https://github.com/ROBOTIS-GIT/robotis_interfaces.git
 
 RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     cd ${COLCON_WS} && \
