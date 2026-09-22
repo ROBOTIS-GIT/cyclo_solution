@@ -13,6 +13,17 @@ jobs:
   # The name of the job
   ROS_CI:
     runs-on: ubuntu-22.04
+    env:
+      NVIDIA_ROSDEP_SKIP_KEYS: >-
+        isaac_ros_common
+        isaac_ros_cumotion
+        isaac_ros_cumotion_interfaces
+        isaac_ros_cumotion_moveit
+        isaac_ros_cumotion_object_attachment
+        isaac_ros_nitros
+        isaac_ros_nitros_image_type
+        nvblox_msgs
+        nvblox_ros
     strategy:
       fail-fast: false
       matrix:
@@ -65,7 +76,13 @@ jobs:
             gpg --dearmor --yes -o /etc/apt/keyrings/nvidia-jetson.gpg
           echo "deb [signed-by=/etc/apt/keyrings/nvidia-jetson.gpg] https://repo.download.nvidia.com/jetson/x86_64/noble r39.2 main" \
             > /etc/apt/sources.list.d/nvidia-jetson-apt-source.list
+          apt-mark unhold libcublas-13-2 libcublas-dev-13-2 2>/dev/null || true
           apt-get update
+          apt-get -o Dpkg::Options::="--force-confold" install -y --no-install-recommends \
+            ros-${{ matrix.ros_distribution }}-isaac-ros-cumotion-moveit \
+            ros-${{ matrix.ros_distribution }}-isaac-ros-cumotion-object-attachment \
+            ros-${{ matrix.ros_distribution }}-isaac-ros-cumotion-robot-segmenter \
+            ros-${{ matrix.ros_distribution }}-nvblox-ros
 
       - name: Check and Install ROS dependencies
         shell: bash
@@ -75,9 +92,11 @@ jobs:
           echo "--- Updating rosdep definitions ---"
           rosdep update
           echo "--- Installing system dependencies for ROS 2 ${{ matrix.ros_distribution }} ---"
-          rosdep install --from-paths ros_ws/src --ignore-src -y -r --rosdistro ${{ matrix.ros_distribution }} --skip-keys robotis_interfaces
+          rosdep install --from-paths ros_ws/src --ignore-src -y -r --rosdistro ${{ matrix.ros_distribution }} \
+            --skip-keys "robotis_interfaces ${NVIDIA_ROSDEP_SKIP_KEYS}"
           echo "--- Performing rosdep check for ROS 2 ${{ matrix.ros_distribution }} ---"
-          if rosdep check --from-paths ros_ws/src --ignore-src --rosdistro ${{ matrix.ros_distribution }} --skip-keys robotis_interfaces; then
+          if rosdep check --from-paths ros_ws/src --ignore-src --rosdistro ${{ matrix.ros_distribution }} \
+            --skip-keys "robotis_interfaces ${NVIDIA_ROSDEP_SKIP_KEYS}"; then
             echo "--- rosdep check passed ---"
           else
             echo "--- rosdep check failed: Missing system dependencies or unresolvable keys. ---"
@@ -89,6 +108,7 @@ jobs:
         with:
           target-ros2-distro: ${{ matrix.ros_distribution }}
           vcs-repo-file-url: "https://raw.githubusercontent.com/ROBOTIS-GIT/cyclo_solution/${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}/cyclo_solution_ci.repos"
+          rosdep-skip-keys: ${{ env.NVIDIA_ROSDEP_SKIP_KEYS }}
           package-name: |
             cyclo_cumotion_bringup
             cyclo_cumotion_description
