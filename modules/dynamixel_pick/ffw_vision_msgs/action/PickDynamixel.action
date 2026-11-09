@@ -1,0 +1,14 @@
+# Internal backend. TaskManager arbitrates all demo motions.
+bool execute
+bool move_to_observe
+---
+bool success
+bool holding
+bool motion_started
+bool stop_confirmed
+bool retryable
+string error_code
+string message
+---
+string phase
+string detail

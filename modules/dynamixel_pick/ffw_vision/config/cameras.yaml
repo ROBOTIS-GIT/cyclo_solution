@@ -1,0 +1,29 @@
+# Empty string = not confirmed on the robot yet
+/**:
+  ros__parameters:
+    camera_id: head
+
+    cameras:
+      head:
+        enabled: true
+        image_topic: /zed/zed_node/left/image_rect_color
+        stream_type: rectified  # raw or rectified
+        camera_info_topic: /zed/zed_node/left/camera_info
+        depth_topic: /zed/zed_node/depth/depth_registered  # only with zed_depth_override.yaml
+        frame_id: zed_left_camera_optical_frame
+
+      left_wrist:  # D405, run with wrist_cameras.launch.py
+        enabled: true
+        image_topic: /camera_left/camera_left/color/image_rect_raw
+        stream_type: raw  # camera_info has distortion coefficients
+        camera_info_topic: /camera_left/camera_left/color/camera_info
+        depth_topic: /camera_left/camera_left/aligned_depth_to_color/image_raw  # 16UC1
+        frame_id: camera_left_color_optical_frame
+
+      right_wrist:  # D405, run with wrist_cameras.launch.py
+        enabled: true
+        image_topic: /camera_right/camera_right/color/image_rect_raw
+        stream_type: raw  # camera_info has distortion coefficients
+        camera_info_topic: /camera_right/camera_right/color/camera_info
+        depth_topic: /camera_right/camera_right/aligned_depth_to_color/image_raw  # 16UC1
+        frame_id: camera_right_color_optical_frame

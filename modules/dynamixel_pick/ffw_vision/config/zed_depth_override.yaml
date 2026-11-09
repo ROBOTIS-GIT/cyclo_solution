@@ -1,0 +1,7 @@
+# Override for camera-only launches; bringup config is unchanged
+/**:
+  ros__parameters:
+    depth:
+      depth_mode: 'ULTRA'  # NEURAL needs TensorRT, not in this image
+      depth_stabilization: 0  # no positional tracking
+      openni_depth_mode: false  # 32FC1 meters

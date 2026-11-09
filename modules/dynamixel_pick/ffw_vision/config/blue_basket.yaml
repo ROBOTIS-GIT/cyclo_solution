@@ -1,0 +1,8 @@
+# Blue basket colour (HSV, OpenCV ranges), shared by the detector (object_detector yolo_seg) and
+# ffw_grasp (basket rim fit); the basket is the largest component of these pixels
+/**:
+  ros__parameters:
+    basket_h_min: 95
+    basket_h_max: 125
+    basket_s_min: 120
+    basket_v_min: 80

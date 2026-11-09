@@ -1,0 +1,18 @@
+# initial: initial pose only; start: full demo; pick: pick from current pose; resume: saved stage.
+string command
+string cup_id
+---
+bool success
+string error_code
+string message
+string last_completed_stage
+# Compatibility field only: always UNVERIFIED; never gates execution.
+string holding_state
+bool can_resume
+---
+string phase
+string detail
+string stage
+uint32 retry_count
+# Compatibility field only: always UNVERIFIED; never gates execution.
+string holding_state

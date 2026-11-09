@@ -1,0 +1,6 @@
+<library path="demo_roll_sampler">
+  <class name="demo_1f/RollSamplerAllocator" type="demo_1f::RollSamplerAllocator"
+         base_class_type="constraint_samplers::ConstraintSamplerAllocator">
+    <description>Sample SG2 TCP goals while enforcing body-relative roll constraints.</description>
+  </class>
+</library>

@@ -1,0 +1,52 @@
+# Task: DYNAMIXELs in the blue basket, right_wrist at the initial pose; hybrid detector (2026-11-05)
+# the OBB top-face model gives the objects, center, size and top height; the seg model's color edge
+# votes give the direction (kept within hybrid_window_deg of the box angle, else the seg vote peak
+# near the box). Same seg settings as dynamixel_basket_seg.yaml (detector: yolo_seg = rollback).
+# Evaluation: angle_review/evidence/README.md
+/**:
+  ros__parameters:
+    camera_id: right_wrist
+    target_label: dynamixel
+    depth_scale: 0.001
+    detector: yolo_hybrid
+    model_file: dynamixel_seg_n640.pt  # in ffw_vision/models: YOLO11n-seg, 640, cup-dump data (2026-11-03)
+    imgsz: 640  # same as training of model_file
+    obb_model_file: dynamixel_obb_n640.pt  # ffw_vision/models: YOLO11n-obb 640, top faces (2026-11-05)
+    obb_imgsz: 640  # same as training of obb_model_file
+    hybrid_window_deg: 25.0  # seg direction kept within this of the box; else seg peak near it
+    hybrid_match_px: 10.0  # seg mask partner = center this close to the box center
+    box_max_length: 0.075  # m; a larger OBB box holds two objects (ambiguous): single boxes up to
+    box_max_width: 0.048  # 67 x 44 mm (they run large), two side by side 57+ wide, end to end 93+
+    top_inner: 0.6  # top height from depth inside the box shrunk to this size
+    box_merge_px: 8.0  # OBB boxes with centers this close are one object (best score kept)
+    report_face_size: true  # size out = known face for the top height (face_long/mid/short);
+    # seg measures it small, a near-square look made ffw_grasp open 70 mm both ways at walls
+    conf: 0.5  # true detections scored 0.58 or more on val
+    dup_overlap: 0.5  # masks sharing this share of the smaller one are one object
+    inner_erode_px: 7  # basket rim left out of the object area
+    ring_gap_px: 9  # table ring around the basket for the support plane
+    ring_outer_px: 41
+    plane_samples: 3000
+    plane_iters: 200
+    plane_tol: 0.004  # m
+    min_plane_points: 300
+    mask_erode_px: 5
+    min_mask_px: 20
+    top_share: 20.0  # top level = median of this percent of highest points
+    top_tolerance: 0.006  # m below the top level still counted as top face
+    edge_percentile: 3.0  # top face extent ignores this percent at each end (depth noise)
+    min_top_px: 10
+    standing_min_height: 0.042  # lying 28-39 mm, standing 44-53 mm above the table
+    max_single_length: 0.056
+    max_single_width: 0.040
+    square_ratio: 1.25  # length / width below this = near square
+    standing_square: true  # standing top face is near square (28.5 x 34 mm): period pi/2
+    angle_method: edges  # edges = color edge directions, min_area_rect = top points
+    edge_min_px: 30  # fewer strong edge pixels -> min_area_rect
+    edge_min_share: 0.15  # weight within 5 deg of the peak; less -> min_area_rect
+    edge_skip_blue: true  # edges only from non-blue mask pixels +1 px; false = whole mask (before 2026-11-05)
+    face_long: 0.0465  # m, DYNAMIXEL box sides: the drawn top face (8765) only
+    face_mid: 0.034
+    face_short: 0.0285
+    min_depth: 0.07
+    max_depth: 1.0

@@ -1,0 +1,7 @@
+handover_demo:
+  ros__parameters:
+    pick:
+      grasp_height: 0.065 # Above inferred cup bottom; assumes upright 16.5cm cup.
+      stand_off: 0.12
+      speed: 0.12
+      tcp_forward_offset: -0.03 # Initial URDF-based pad center behind TCP; tune on hardware.

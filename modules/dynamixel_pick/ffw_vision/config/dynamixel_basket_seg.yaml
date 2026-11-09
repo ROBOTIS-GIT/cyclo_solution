@@ -1,0 +1,41 @@
+# Task: one DYNAMIXEL in the blue basket, right_wrist at the initial pose
+# (right arm [1.05, 0, 0, -2.27, 0, 0.35, 0], lift -0.1); thresholds from wrist2/test recordings (2026-10-29)
+# The model is model_file below (model_path:= overrides it for trials); basket colour is
+# blue_basket.yaml
+/**:
+  ros__parameters:
+    camera_id: right_wrist
+    target_label: dynamixel
+    depth_scale: 0.001
+    detector: yolo_seg
+    model_file: dynamixel_seg_n640.pt  # in ffw_vision/models: YOLO11n-seg, 640, cup-dump data (2026-11-03)
+    imgsz: 640  # same as training of model_file
+    conf: 0.5  # true detections scored 0.58 or more on val
+    dup_overlap: 0.5  # masks sharing this share of the smaller one are one object
+    inner_erode_px: 7  # basket rim left out of the object area
+    ring_gap_px: 9  # table ring around the basket for the support plane
+    ring_outer_px: 41
+    plane_samples: 3000
+    plane_iters: 200
+    plane_tol: 0.004  # m
+    min_plane_points: 300
+    mask_erode_px: 5
+    min_mask_px: 20
+    top_share: 20.0  # top level = median of this percent of highest points
+    top_tolerance: 0.006  # m below the top level still counted as top face
+    edge_percentile: 3.0  # top face extent ignores this percent at each end (depth noise)
+    min_top_px: 10
+    standing_min_height: 0.042  # lying 28-39 mm, standing 44-53 mm above the table
+    max_single_length: 0.056
+    max_single_width: 0.040
+    square_ratio: 1.25  # length / width below this = near square
+    standing_square: true  # standing top face is near square (28.5 x 34 mm): period pi/2
+    angle_method: edges  # edges = color edge directions, min_area_rect = top points
+    edge_min_px: 30  # fewer strong edge pixels -> min_area_rect
+    edge_min_share: 0.15  # weight within 5 deg of the peak; less -> min_area_rect
+    edge_skip_blue: true  # edges only from non-blue mask pixels +1 px; false = whole mask (before 2026-11-05)
+    face_long: 0.0465  # m, DYNAMIXEL box sides: the drawn top face (8765) only
+    face_mid: 0.034
+    face_short: 0.0285
+    min_depth: 0.07
+    max_depth: 1.0

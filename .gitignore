@@ -1,0 +1,10 @@
+build/
+install/
+log/
+__pycache__/
+*.pyc
+docker/.env
+ai_worker/
+models/*.engine
+*.before-*
+.ruff_cache/

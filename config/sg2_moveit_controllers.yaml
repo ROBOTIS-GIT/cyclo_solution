@@ -1,0 +1,43 @@
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+moveit_simple_controller_manager:
+  controller_names:
+  - arm_l_controller
+  - arm_r_controller
+  - head_controller
+  - lift_controller
+  head_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints: [head_joint1, head_joint2]
+  lift_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints: [lift_joint]
+  arm_l_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+    - arm_l_joint1
+    - arm_l_joint2
+    - arm_l_joint3
+    - arm_l_joint4
+    - arm_l_joint5
+    - arm_l_joint6
+    - arm_l_joint7
+    - gripper_l_joint1
+  arm_r_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+    - arm_r_joint1
+    - arm_r_joint2
+    - arm_r_joint3
+    - arm_r_joint4
+    - arm_r_joint5
+    - arm_r_joint6
+    - arm_r_joint7
+    - gripper_r_joint1

@@ -1,0 +1,7 @@
+# SG2 head RGB/depth topics used by the manual browser test.
+head:
+  rgb_topic: /zed/zed_node/rgb/image_rect_color
+  depth_topic: /zed/zed_node/depth/depth_registered
+  info_topic: /zed/zed_node/rgb/camera_info
+  port: 8765
+  require_zero_distortion: false

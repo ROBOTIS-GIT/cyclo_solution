@@ -1,0 +1,231 @@
+# SG2 handover: 45 mm extended TCPs; receiver advances 20 mm deeper at transfer.
+# After release, each TCP retreats 50 mm outward, preserving its transfer orientation.
+handover_demo:
+  ros__parameters:
+    planning_frame: base_link
+    joint_states_topic: /joint_states
+    move_group_action: /move_action
+    handover_action: /handover
+    planning_pipeline: pilz_industrial_motion_planner
+    coordinated_group: handover_arms
+    coordinated_pipeline: ompl
+    coordinated_planner: RRTConnectkConfigDefault
+    gripper_transport: action
+    velocity_scale: 0.15
+    acceleration_scale: 0.15
+    planning_time: 5.0
+    ompl_planning_attempts: 3
+    state_max_age: 1.0
+    tf_max_age: 1.0
+    require_tcp_tf: true
+    settle_time: 0.25
+    stopped_velocity: 0.03
+    cancel_timeout: 5.0
+    gripper_stop_mode: position_window
+    require_passive_gripper_stationary: false
+    gripper_stop_window: 0.5
+    gripper_completion_window: 0.25
+    gripper_settle_time: 0.1
+    gripper_stop_position_tolerance: 0.004
+    gripper_stop_max_gap: 0.1
+    gripper_goal_tolerance: 0.004
+    smooth_motion: true
+    path_simplification_tolerance: 0.002
+    trajectory_sample_period: 0.01
+    continuous_start_tolerance: 0.01
+    motion_sequences:
+      left_to_right:
+        steps:
+        - face_each_other
+        - open_approach
+        - receiver_close
+        - giver_release
+        - retreat_together
+        face_each_other:
+          type: dual_joint
+          blend_with_next: true
+          velocity_scale: 0.4
+          acceleration_scale: 0.4
+          left_target:
+          - -0.18441049
+          - 0.83519439
+          - -0.21086751
+          - -1.4514526
+          - 1.63022887
+          - 1.49778519
+          - -0.79315651
+          right_target:
+          - 0.13507745
+          - -0.91394382
+          - 0.30582384
+          - -1.665228
+          - -0.83815159
+          - -0.31098775
+          - 1.29669374
+          timeout: 45.0
+        open_approach:
+          type: dual_joint_gripper
+          velocity_scale: 0.4
+          acceleration_scale: 0.4
+          arm: receiver
+          left_target:
+          - -0.15855931
+          - 0.58127026
+          - -0.29351654
+          - -1.54300553
+          - 2.04855306
+          - 1.34050739
+          - -0.12587388
+          right_target:
+          - -0.00923237
+          - -0.71408088
+          - 0.53774956
+          - -1.85285659
+          - -0.60687271
+          - -0.10443117
+          - 0.97990881
+          gripper_target:
+          - 0.0
+          tolerance: 0.017453292519943295
+          planning_tolerance: 0.0005
+          timeout: 45.0
+        receiver_close:
+          type: gripper
+          gripper_wait_only: true
+          arm: receiver
+          target:
+          - 0.8
+          duration: 0.6
+          velocity_scale: 1.0
+          acceleration_scale: 1.0
+          timeout: 12.0
+        giver_release:
+          type: gripper
+          arm: giver
+          target:
+          - 0.0
+          duration: 0.6
+          velocity_scale: 1.0
+          acceleration_scale: 1.0
+          timeout: 12.0
+        retreat_together:
+          type: dual_joint
+          timeout: 45.0
+          velocity_scale: 0.4
+          acceleration_scale: 0.4
+          left_target:
+          - -0.15602401
+          - 0.65717678
+          - -0.2256597
+          - -1.50082468
+          - 1.9681034
+          - 1.43097349
+          - -0.27834375
+          right_target:
+          - 0.04107157
+          - -0.79646953
+          - 0.46556125
+          - -1.81809928
+          - -0.68103996
+          - -0.17637141
+          - 1.06225327
+      right_to_left:
+        steps:
+        - face_each_other
+        - open_approach
+        - receiver_close
+        - giver_release
+        - retreat_together
+        face_each_other:
+          type: dual_joint
+          blend_with_next: true
+          velocity_scale: 0.4
+          acceleration_scale: 0.4
+          left_target:
+          - 0.13507745
+          - 0.91394382
+          - -0.30582384
+          - -1.665228
+          - 0.83815159
+          - -0.31098775
+          - -1.29669374
+          right_target:
+          - -0.18441049
+          - -0.83519439
+          - 0.21086751
+          - -1.4514526
+          - -1.63022887
+          - 1.49778519
+          - 0.79315651
+          timeout: 45.0
+        open_approach:
+          type: dual_joint_gripper
+          velocity_scale: 0.4
+          acceleration_scale: 0.4
+          arm: receiver
+          left_target:
+          - -0.00923237
+          - 0.71408088
+          - -0.53774956
+          - -1.85285659
+          - 0.60687271
+          - -0.10443117
+          - -0.97990881
+          right_target:
+          - -0.15855931
+          - -0.58127026
+          - 0.29351654
+          - -1.54300553
+          - -2.04855306
+          - 1.34050739
+          - 0.12587388
+          gripper_target:
+          - 0.0
+          tolerance: 0.017453292519943295
+          planning_tolerance: 0.0005
+          timeout: 45.0
+        receiver_close:
+          type: gripper
+          gripper_wait_only: true
+          arm: receiver
+          target:
+          - 0.8
+          duration: 0.6
+          velocity_scale: 1.0
+          acceleration_scale: 1.0
+          timeout: 12.0
+        giver_release:
+          type: gripper
+          arm: giver
+          target:
+          - 0.0
+          duration: 0.6
+          velocity_scale: 1.0
+          acceleration_scale: 1.0
+          timeout: 12.0
+        retreat_together:
+          type: dual_joint
+          timeout: 45.0
+          velocity_scale: 0.4
+          acceleration_scale: 0.4
+          left_target:
+          - 0.04107157
+          - 0.79646953
+          - -0.46556125
+          - -1.81809928
+          - 0.68103996
+          - -0.17637141
+          - -1.06225327
+          right_target:
+          - -0.15602401
+          - -0.65717678
+          - 0.2256597
+          - -1.50082468
+          - -1.9681034
+          - 1.43097349
+          - 0.27834375
+    arms:
+      left:
+        tcp: gripper_l_tcp
+      right:
+        tcp: gripper_r_tcp

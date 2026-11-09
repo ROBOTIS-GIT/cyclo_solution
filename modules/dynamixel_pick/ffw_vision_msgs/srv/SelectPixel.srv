@@ -1,0 +1,10 @@
+# Select one pixel in a frame the observer has received.
+string camera_id
+builtin_interfaces/Time image_stamp  # stamp of the frame the pixel was picked on
+float64 u  # source image column, integer = pixel center
+float64 v  # source image row
+string target_label
+---
+bool accepted
+string message
+PixelObservation observation  # published observation; empty when not accepted

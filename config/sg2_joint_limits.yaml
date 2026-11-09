@@ -1,0 +1,160 @@
+joint_limits:
+  head_joint1:
+    has_velocity_limits: true
+    max_velocity: 0.5
+    has_acceleration_limits: true
+    max_acceleration: 0.5
+  head_joint2:
+    has_velocity_limits: true
+    max_velocity: 0.5
+    has_acceleration_limits: true
+    max_acceleration: 0.5
+  lift_joint:
+    has_velocity_limits: true
+    max_velocity: 0.05
+    has_acceleration_limits: true
+    max_acceleration: 0.1
+  arm_l_joint1:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_l_joint2:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_l_joint3:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_l_joint4:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_l_joint5:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_l_joint6:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_l_joint7:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  gripper_l_joint1:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 20.0
+  arm_r_joint1:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_r_joint2:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_r_joint3:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_r_joint4:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_r_joint5:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_r_joint6:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  arm_r_joint7:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 4.0
+  gripper_r_joint1:
+    has_velocity_limits: true
+    max_velocity: 2.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+    has_deceleration_limits: true
+    max_deceleration: -2.0
+    has_jerk_limits: true
+    max_jerk: 20.0

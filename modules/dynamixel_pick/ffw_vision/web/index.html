@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>ffw_vision select</title>
+<style>
+  body { font-family: sans-serif; margin: 12px; background: #111; color: #eee; }
+  #bar { margin-bottom: 8px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  #main { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+  #wrap { position: relative; display: inline-block; max-width: 100%; }
+  #panel { background: #1b1b1b; margin: 0; padding: 8px 10px; font-size: 13px; line-height: 1.4;
+           white-space: pre; overflow-x: auto; max-width: 100%; }
+  #img { display: block; max-width: 100%; cursor: crosshair; }
+  #mark { position: absolute; left: 0; top: 0; pointer-events: none; }
+  #result { background: #222; padding: 8px; white-space: pre-wrap; }
+  .paused { color: #f80; font-weight: bold; }
+</style>
+</head>
+<body>
+<div id="bar">
+  <button id="pause">Pause (Space)</button>
+  <span id="state"></span>
+  <span id="info"></span>
+</div>
+<div id="main">
+  <div id="wrap">
+    <img id="img" alt="waiting for frames">
+    <canvas id="mark"></canvas>
+  </div>
+  <pre id="panel" hidden></pre>
+</div>
+<p>클릭: 지금 보이는 프레임의 원본 픽셀 (u, v) 로 관측을 발행. 빨강 = 클릭 위치, 초록 = 발행된 원본 픽셀 중심.</p>
+<pre id="result"></pre>
+<script>
+const img = document.getElementById('img');
+const mark = document.getElementById('mark');
+const info = document.getElementById('info');
+const state = document.getElementById('state');
+const result = document.getElementById('result');
+const panel = document.getElementById('panel');
+let paused = false;
+let shown = null;  // metadata of the frame currently on screen
+let objectUrl = null;
+
+function readMeta(r) {
+  return {
+    sec: Number(r.headers.get('X-Stamp-Sec')),
+    nanosec: Number(r.headers.get('X-Stamp-Nanosec')),
+    frameId: r.headers.get('X-Frame-Id'),
+    width: Number(r.headers.get('X-Width')),
+    height: Number(r.headers.get('X-Height')),
+    cameraId: r.headers.get('X-Camera-Id'),
+  };
+}
+
+function showInfo() {
+  state.textContent = paused ? 'PAUSED' : 'LIVE';
+  state.className = paused ? 'paused' : '';
+  if (!shown) return;
+  const rect = img.getBoundingClientRect();
+  info.textContent = `${shown.cameraId} | stamp ${shown.sec}.${String(shown.nanosec).padStart(9, '0')}`
+    + ` | ${shown.frameId} | source ${shown.width}x${shown.height}`
+    + ` | display ${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`;
+}
+
+async function poll() {
+  if (!paused) {
+    try {
+      const r = await fetch('/frame', {cache: 'no-store'});
+      if (r.ok) {
+        const meta = readMeta(r);
+        const url = URL.createObjectURL(await r.blob());
+        if (paused) {
+          URL.revokeObjectURL(url);  // arrived after pause: keep the frozen frame
+        } else {
+          img.onload = () => {
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+            objectUrl = url;
+            shown = meta;  // metadata always follows the image on screen
+            clearMark();
+            showInfo();
+          };
+          img.src = url;
+        }
+      } else {
+        info.textContent = `no frame (${r.status})`;
+      }
+    } catch (e) {
+      info.textContent = `error: ${e}`;
+    }
+  }
+  setTimeout(poll, 100);
+}
+
+// settings and per-object numbers from the node's info topic (absent: panel stays hidden)
+async function pollInfo() {
+  if (!paused) {
+    try {
+      const r = await fetch('/info', {cache: 'no-store'});
+      if (r.ok) {
+        panel.textContent = await r.text();
+        panel.hidden = false;
+      }
+    } catch (e) { /* keep the last text */ }
+  }
+  setTimeout(pollInfo, 300);
+}
+
+function clearMark() {
+  const rect = img.getBoundingClientRect();
+  mark.width = rect.width;
+  mark.height = rect.height;
+  mark.getContext('2d').clearRect(0, 0, mark.width, mark.height);
+}
+
+function cross(ctx, x, y, color) {
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x - 8, y); ctx.lineTo(x + 8, y);
+  ctx.moveTo(x, y - 8); ctx.lineTo(x, y + 8);
+  ctx.stroke();
+}
+
+function togglePause() {
+  paused = !paused;
+  showInfo();
+}
+
+img.addEventListener('click', async (ev) => {
+  if (!shown) return;
+  const rect = img.getBoundingClientRect();
+  const x = ev.clientX - rect.left;
+  const y = ev.clientY - rect.top;
+  const frame = shown;
+  clearMark();
+  const ctx = mark.getContext('2d');
+  cross(ctx, x, y, 'red');
+  const body = {
+    stamp_sec: frame.sec, stamp_nanosec: frame.nanosec,
+    x: x, y: y, display_width: rect.width, display_height: rect.height,
+  };
+  const r = await fetch('/select', {
+    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
+  });
+  const j = await r.json();
+  result.textContent = JSON.stringify({request: body, response: j}, null, 2);
+  if (r.ok && j.accepted) {
+    cross(ctx, (j.u + 0.5) * rect.width / j.image_width,
+          (j.v + 0.5) * rect.height / j.image_height, 'lime');
+  }
+});
+
+document.getElementById('pause').addEventListener('click', togglePause);
+document.addEventListener('keydown', (ev) => {
+  if (ev.code === 'Space') { ev.preventDefault(); togglePause(); }
+});
+window.addEventListener('resize', () => { clearMark(); showInfo(); });
+poll();
+pollInfo();
+</script>
+</body>
+</html>

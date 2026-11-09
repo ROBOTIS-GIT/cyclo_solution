@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ffw_grasp</name>
+  <version>0.1.0</version>
+  <description>
+    AI Worker grasp planning: top-down grasp and hover poses in base_link from vision object observations.
+  </description>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">http://ai.robotis.com</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/ai_worker</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/ai_worker/issues</url>
+  <author email="jiho010920@gmail.com">Jiho Park</author>
+
+  <depend>rclpy</depend>
+  <depend>ffw_vision</depend>
+  <depend>ffw_vision_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf2_ros</depend>
+
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

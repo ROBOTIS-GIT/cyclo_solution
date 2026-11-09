@@ -1,0 +1,37 @@
+handover_demo:
+  ros__parameters:
+    demo:
+      max_retries: 2       # Additional attempts for fresh perception / pre-motion pick planning.
+      retry_delay: 1.0     # Seconds before re-acquiring observations.
+      pick_timeout: 180.0 # Perception, IK search, close and lift; initialization is a separate stage.
+    motion_sequences:
+      # From ai_worker origin/feature-demo:
+      # ffw_bringup/config/ffw_sg2_rev1_follower/ffw_sg2_follower_custom_positions.yaml
+      initial_pose:
+        steps: [open_left, open_right, observe_robot]
+        open_left:
+          type: gripper
+          arm: left
+          target: [0.0]
+          duration: 0.6
+          timeout: 12.0
+        open_right:
+          type: gripper
+          arm: right
+          target: [0.0]
+          duration: 0.6
+          timeout: 12.0
+        observe_robot:
+          type: joint_group
+          group: initial_pose
+          joint_names: [arm_l_joint1, arm_l_joint2, arm_l_joint3, arm_l_joint4, arm_l_joint5, arm_l_joint6, arm_l_joint7,
+                        arm_r_joint1, arm_r_joint2, arm_r_joint3, arm_r_joint4, arm_r_joint5, arm_r_joint6, arm_r_joint7,
+                        lift_joint, head_joint1, head_joint2]
+          target: [1.05, 0.0, 0.0, -2.27, 0.0, 0.35, 0.0,
+                   1.05, 0.0, 0.0, -2.27, 0.0, 0.35, 0.0,
+                   -0.1, 0.69, 0.0]
+          tolerance: 0.01
+          planning_tolerance: 0.001
+          velocity_scale: 0.35
+          acceleration_scale: 0.35
+          timeout: 45.0

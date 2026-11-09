@@ -1,0 +1,19 @@
+# Shared cup action envelope. /approach_cup moves only; /refine_cup releases;
+# /pick_cup grasps and lifts. Preview behavior is described in result.message.
+string arm
+string cup_id
+# Default false: compute/publish geometry only; no planning scene or robot commands.
+bool execute false
+---
+bool success
+bool reached_observation_pose
+geometry_msgs/PoseStamped target_pose
+# Compatibility name: for a head BODY observation this is the TF-transformed body surface
+# point, NOT an estimated rim. TCP target adds cup_height above this point.
+geometry_msgs/PoseStamped estimated_cup_pose
+string error_code
+string message
+---
+string phase
+string detail
+geometry_msgs/PoseStamped target_pose

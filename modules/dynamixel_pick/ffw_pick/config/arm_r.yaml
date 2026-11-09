@@ -1,0 +1,28 @@
+# Right arm of the AI Worker: names in the URDF (ffw_description), MoveIt (ffw_moveit_config) and
+# the bringup controllers, its home pose and the limits the own trajectories keep to
+/**:
+  ros__parameters:
+    group: arm_r  # MoveIt planning group
+    base_frame: base_link
+    end_effector_link: gripper_r_tcp
+    wrist_link: arm_r_link7  # it and every link below it move with the fingertip pose only
+    arm_joints: [arm_r_joint1, arm_r_joint2, arm_r_joint3, arm_r_joint4, arm_r_joint5,
+                 arm_r_joint6, arm_r_joint7]
+    gripper_joint: gripper_r_joint1
+    # URDF finger links (with --allow-finger-walls they may touch the basket walls)
+    finger_links: [gripper_r_rh_p12_rn_r1, gripper_r_rh_p12_rn_r2, gripper_r_rh_p12_rn_l1,
+                   gripper_r_rh_p12_rn_l2]
+    # links the attached finger extension boxes may touch
+    touch_links: [end_effector_r_link, gripper_r_rh_p12_rn_base, gripper_r_rh_p12_rn_r1,
+                  gripper_r_rh_p12_rn_r2, gripper_r_rh_p12_rn_l1, gripper_r_rh_p12_rn_l2]
+    gripper_action: /arm_r_controller/follow_joint_trajectory
+    # movej and teleoperation command this arm here; nothing may arrive while MoveIt moves it
+    controller_topic: /leader/joint_trajectory_command_broadcaster_right/joint_trajectory
+    # initial pose 3 (= bringup custom_positions step1); also where the wrist camera observes,
+    # and its fingertip rotation ranks the grasp options
+    home: [1.05, 0.0, 0.0, -2.27, 0.0, 0.35, 0.0]
+    home_tolerance: 0.05  # rad: --release-home starts only this close to home
+    joint_margin: 0.003  # rad kept from the URDF joint limits by every IK solution
+    # joint speed is the URDF limit (4.8 rad/s); these two match ffw_moveit_config
+    max_acceleration: 5.0  # rad/s^2, joint_limits.yaml
+    max_fingertip_speed: 1.0  # m/s, pilz_cartesian_limits.yaml max_trans_vel

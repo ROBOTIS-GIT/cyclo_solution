@@ -1,0 +1,9 @@
+build
+install
+log
+.git
+__pycache__
+.venv
+.ruff_cache
+ai_worker
+docker/.env

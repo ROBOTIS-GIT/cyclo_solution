@@ -1,0 +1,22 @@
+# Task: DYNAMIXEL in the blue basket, right_wrist at observe_top_h35 with lift -0.05
+# Drafts from task_observe captures (2026-10-26); tune on the robot
+/**:
+  ros__parameters:
+    camera_id: right_wrist
+    target_label: dynamixel
+    depth_scale: 0.001
+    roi: [120, 0, 340, 240]  # basket floor, excludes gripper fingers; valid for this pose only
+    dark_v_max: 110
+    gray_s_max: 120  # basket floor saturation is 243 or more
+    gray_v_max: 180  # keeps the white basket rim out
+    min_area: 300
+    max_single_area: 1800  # one lying ~1400 px, two touching ~2300 px
+    max_single_length: 60.0
+    min_height: 0.012
+    standing_min_height: 0.035  # measured lying 22-32 mm, standing 38-44 mm; label is a hint only
+    min_depth_ratio: 0.3
+    top_tolerance: 0.008  # side faces seen off-axis are left out of the top surface
+    min_top_ratio: 0.3
+    square_ratio: 1.25
+    min_depth: 0.05
+    max_depth: 2.0

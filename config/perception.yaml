@@ -1,0 +1,22 @@
+# Head YOLO segmentation + registered depth. Camera bringup runs separately.
+perception:
+  ros__parameters:
+    cup:
+      id: cup
+      inner_radius: 0.045
+      wall_thickness: 0.005
+    ai:
+      backend: auto
+      score_threshold: 0.35
+      classes:
+      - 41
+    cameras:
+      head:
+        rgb_topic: ''
+        depth_topic: ''
+        info_topic: ''
+        roi:
+        - 0
+        - 0
+        - 0
+        - 0

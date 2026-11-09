@@ -1,0 +1,17 @@
+# Pick behaviour of pick_moveit; each value can be overridden on the command line (--above ...)
+/**:
+  ros__parameters:
+    ns: /ffw_grasp/right_wrist  # ffw_grasp grasp_planner namespace (plan service, poses)
+    above: 0.10  # m: the joint path ends this far behind the hover along the finger axis
+    lift: 0.15  # m straight up after closing
+    speed: 0.35  # velocity scaling 0-1
+    accel: 0.35  # acceleration scaling 0-1
+    turn_window: 15.0  # deg: options turned up to this much more than the least turned one are
+    # all solved, the least joint motion wins
+    budget: 30.0  # s of approach search before giving up (stops early on success)
+    hold: 2.0  # s held up before --put-back or --release-home
+    home_lift: 0.10  # m straight up before --home and --release-home go to HOME (0 = none)
+    plan_tries: 3  # plan calls before giving up (camera/TF, a settling object); 2 empty = done
+    retry_wait: 2.0  # s between those plan calls
+    empty_tries: 3  # --release-home: picks in a row with empty fingers before the loop stops
+    state_tolerance: 0.01  # rad or m: move_group's robot state vs /joint_states before planning

@@ -1,0 +1,15 @@
+# One calibrated sequence per direction; no motion is performed at node startup.
+string direction
+---
+bool sequence_completed
+# Scripted motion alone never establishes successful physical transfer.
+bool handover_confirmed
+string error_code
+string message
+string last_completed_step
+---
+string direction
+string phase
+string execution_state
+# Compatibility field only: always UNVERIFIED; never gates execution.
+string holding_state

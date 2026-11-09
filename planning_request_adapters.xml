@@ -1,0 +1,7 @@
+<library path="demo_start_state_adapter">
+  <class name="demo_1f/SnapStartStateBounds"
+         type="demo_1f::SnapStartStateBounds"
+         base_class_type="planning_interface::PlanningRequestAdapter">
+    <description>Snap start-state roundoff within 1e-8 to existing model bounds; reject larger violations.</description>
+  </class>
+</library>

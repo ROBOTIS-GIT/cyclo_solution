@@ -1,0 +1,14 @@
+# Right gripper opening table (G4-0, measured by the user 2026-10-29)
+# [gripper_r_joint1 rad, gap between the fingertip inner faces m]; 0 = open, 1.1 = closed
+# measure each with: ros2 run ffw_pick pick_moveit --gripper <rad>
+table:
+  - [0.0, 0.092]
+  - [0.2, 0.077]
+  - [0.4, 0.061]
+  - [0.6, 0.043]
+  - [0.8, 0.022]
+# fingers stopped below this after closing = holding (2026-11-02: empty closed to 1.0 stops at
+# 0.997, held objects at 0.758-0.927; the table says ~0.74 for the 28.5 mm side)
+hold_below: 0.94  # rad
+close_command: 1.0  # rad: past every object side, so an empty grip closes past hold_below
+move_time: 1.0  # s to open or close

@@ -1,0 +1,33 @@
+services:
+  demo_1f:
+    image: demo-1f:local
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      # Python setup downloads packages; compilation itself remains offline.
+      network: host
+      args:
+        BASE_IMAGE: ${DEMO_BASE_IMAGE:-robotis/ai-worker:2.2.7}
+    network_mode: host
+    ipc: host
+    runtime: ${DEMO_RUNTIME:-nvidia}
+    tty: true
+    restart: unless-stopped
+    init: true
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      rtprio: 99
+      rttime: -1
+      memlock: 8428281856
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-30}
+      RMW_IMPLEMENTATION: ${RMW_IMPLEMENTATION:-rmw_zenoh_cpp}
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    volumes:
+      - ../config:/demo_config:ro
+    # Stay idle until a user enters the container and launches the demo.
+    command: ["sleep", "infinity"]
+    stop_grace_period: 15s
+    # No device mounts, privileged mode, robot bringup, or duplicate Zenoh router.

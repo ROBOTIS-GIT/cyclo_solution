@@ -1,0 +1,33 @@
+handover_demo:
+  ros__parameters:
+    approach:
+      # BODY Z is assumed at cup middle for this test; it is not a measured opening.
+      # Cup model top = BODY Z + height/2. TCP target = BODY Z + height + offset_z.
+      cup_height: 0.165
+      inner_radius: 0.045
+      wall_thickness: 0.005
+      offset_xy: [0.0, 0.0]
+      offset_z: -0.05 # Lower TCP target by 5 cm; cup collision model stays unchanged.
+      # Goal-only body-frame hand tilt: forward=-TCP Z; up/camera=+TCP X. Yaw can be restricted to forward/inward.
+      tcp_roll_limit_deg: 10.0
+      tcp_pitch_min_deg: 20.0
+      tcp_pitch_limit_deg: 60.0
+      tcp_pitch_downward_only: true # Hand elevation -60..-20 deg; internal pitch +20..+60.
+      tcp_yaw_inward_only: true # Left -90..0 deg; right 0..90 deg, goal only.
+      travel_scale: 0.3
+      max_position_error: 0.15
+      max_age: 30.0 # Keep the last confirmed head BODY location through temporary occlusion.
+      observation_timeout: 4.0 # Wait for the background tracker only when no usable saved cup exists.
+      # Wrist refinement action, separate from coarse approach.
+      refine_pitch_step_deg: 5.0
+      refine_pitch_ceiling_deg: 75.0
+      refine_search_timeout: 15.0
+      refine_max_correction: 0.12
+      refine_speed: 0.06
+      refine_correction_speed: 0.20
+      refine_correction_acceleration: 0.12
+      refine_lower_distance: 0.03
+      refine_gripper_open: 0.0
+      refine_clearance: 0.05
+      refine_wait: 3.0
+      refine_view_wait: 1.0

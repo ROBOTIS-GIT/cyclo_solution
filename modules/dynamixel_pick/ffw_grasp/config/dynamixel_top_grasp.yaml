@@ -1,0 +1,87 @@
+# Task: DYNAMIXEL from the blue basket, top-down with the right gripper (RH-P12-RN)
+# finger sizes measured by the user 2026-10-29; finger_width is assumed
+# This robot's calibration (fingertip length, camera and arm biases): robot_calibration.yaml
+# Basket colour: ffw_vision blue_basket.yaml (shared with the detector)
+/**:
+  ros__parameters:
+    camera_id: right_wrist
+    end_effector_frame: gripper_r_tcp
+    frames: 10
+    min_frames: 7
+    object_radius_px: 10.0  # a target this close to an object of the frame before is that object
+    standing_min_height: 0.042  # pose from the median top height (same as ffw_vision's value)
+    max_open: 0.090
+    clearance: 0.012
+    min_clearance: 0.005  # less than this per side = too wide to grasp
+    backup_clearances: [0.008, 0.005]  # narrower openings tried after the normal ones: a low
+    # object beside a wall fits only so (2026-11-03, fail_scene01: 5 mm clears MoveIt's walls too)
+    finger_tip: 0.005  # at the tip
+    finger_thick: 0.025  # 3 cm above the tip
+    taper_height: 0.030
+    finger_max: 0.030
+    finger_width: 0.015  # across the closing axis at the tip (user 2026-10-29)
+    finger_width_root: 0.025  # ... near the gripper body
+    finger_length: 0.100  # tip to the gripper body (user); URDF says 128 mm, nearer is safer
+    # gripper body (URDF rh_p12_rn base 80 x 54 mm, user 80 x 50) and arm_r_link7 with the
+    # camera (URDF x -45..+133, y +-24; user 173 x 41, starts 155 mm up), each + 15 mm
+    # (+5 mm left the wrist very close to the basket wall, user 2026-10-29)
+    body_half_y: 0.055
+    body_x_min: -0.042
+    body_x_max: 0.042
+    link_start: 0.155
+    link_half_y: 0.039
+    link_x_min: -0.060
+    link_x_max: 0.148
+    known_short: 0.034  # DYNAMIXEL 28.5 x 34 x 46.5 mm (user 2026-10-29): opening never
+    known_long: 0.0465  # narrower than the real object (measured tops are eroded)
+    max_roll_deg: 25.0  # only when every upright grasp is blocked (thick finger top vs a wall)
+    roll_step_deg: 5.0
+    roll_top_margin: 0.004  # m: the raised fingertip stays this far under the top face
+    roll_backup: true  # free rolls also listed after the upright options: MoveIt's walls may
+    roll_backup_max: 8  # block every upright one (2026-11-03); per candidate, half per side
+    near_radius: 0.3  # m: rolled grasps check the scene points this close to the object
+    max_tilt_deg: 40.0  # tilt about the closing axis, top toward the robot: the arm stays in the
+    # initial pose's elbow shape (vertical needs a 2-3 rad elbow flip); user OK 2026-10-29.
+    # 50 deg scraped the floor and crowded the wall; 30 deg bends the wrist to its limit: 40 (user)
+    tilt_step_deg: 10.0  # a blocked tilt is retried this much smaller, down to vertical
+    lean_x: -1.0  # base direction the gripper top leans to: toward the robot
+    lean_y: 0.0
+    grasp_depth: 0.015
+    floor_height: 0.005  # basket floor above the table the plane is fitted to
+    floor_clearance: 0.008  # lowest finger corner above the floor after closing
+    close_drop: 0.009  # URDF linkage: tips go ~6 mm further closing 60 -> 25 mm, more to 22 mm
+    square_ratio: 1.25  # measured long / short below this: which side is long is unsure
+    long_side_poses: lying  # an eroded lying top can look square: open for 46.5 mm
+    hover_height: 0.10
+    obstacle_points: 10  # this many scene points in one finger's space = blocked
+    veil_step: 2  # px; collision ignores pixels in the middle of a depth jump: mixed depth at
+    veil_jump: 0.008  # m  object edges lands in empty space
+    min_depth: 0.07
+    max_depth: 1.0
+    # blue basket outer size (notes/PLAN.md): its pose is measured from the rim each plan
+    # (wrist2 recordings: rim 321-332 x 239-243 mm)
+    basket_length: 0.32
+    basket_width: 0.24
+    basket_height: 0.075
+    # the walls slope from the inner size at the floor to the inner size at the rim (ruler, user
+    # 2026-10-30; depth could not see the near walls' inner faces), floor thickness = floor_height
+    basket_inner_top: [0.295, 0.210]
+    basket_inner_floor: [0.260, 0.180]
+    wall_band: 0.0  # wall points block the fingers again (user 2026-11-02, fingers hit the basket);
+    # 0.02 = wall points within 2 cm of the model do not block them (walls bulge, depth wavers)
+    basket_rim_band: 0.008  # rim = blue points this close to the top level
+    basket_min_points: 300
+    basket_edge_px: 4  # rim points this close to the image border = side cut off
+    basket_height_tol: 0.02  # m: a measured rim further from basket_height = not the basket
+    basket_rim_percentile: 97.0  # rim top level = this percentile of the blue point heights
+    basket_extent_percentile: 0.5  # rim extents leave out this percent at each end
+    basket_cut_margin: 0.01  # m: an extent this much under the known size may be cut off ...
+    basket_cut_window: 0.02  # m: ... when rim points this near its end touch the image border
+    # MoveIt scene for ffw_pick (not grasp_planner parameters)
+    basket_wall: 0.010
+    basket_wall_height: 0.08  # scene walls a little above the real rim (user 2026-10-30)
+    basket_wall_margin: 0.0  # scene walls this much thicker inward (measured basket error)
+    table_margin: 0.15  # table box reaches this far beyond the basket
+    table_thick: 0.04
+    finger_overlap: 0.01  # finger extension boxes reach this far into the URDF fingers
+    finger_layers: [0.0, 0.01, 0.02, 0.03, 0.045]  # finger box layer bottoms above the tip, m
