@@ -1,7 +1,9 @@
 services:
   cyclo_solution:
     container_name: cyclo_solution
-    image: robotis/cyclo-solution:0.1.0
+    build:
+      context: .
+      dockerfile: Dockerfile.amd64
     tty: true
     restart: always
     cap_add:
@@ -19,6 +21,5 @@ services:
       - /dev:/dev
       - /dev/shm:/dev/shm
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ../:/root/ros2_ws/src/cyclo_solution/
     privileged: true
     gpus: all
