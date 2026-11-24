@@ -7,9 +7,30 @@ planning, and manipulation capabilities can be added independently.
 ## Prerequisites
 
 Cyclo Solution follows the
-[NVIDIA Isaac ROS system requirements](https://nvidia-isaac-ros.github.io/getting_started/index.html#system-requirements),
+[NVIDIA Isaac ROS system requirements](https://nvidia-isaac-ros.github.io/v/release-4.6/getting_started/index.html#system-requirements),
 including its supported NVIDIA GPU, operating system, driver, Docker, and
 NVIDIA Container Toolkit requirements.
+
+## Build and start on the workstation
+
+On an x86_64 GPU workstation with Docker Compose 2.30 or later, run:
+
+```bash
+git clone https://github.com/ROBOTIS-GIT/cyclo_solution.git
+cd cyclo_solution
+./docker/container.sh start
+./docker/container.sh enter
+```
+
+The image builds locally from the public CUDA base image and ROS packages.
+The Dockerfile clones the `jazzy` branches of `cyclo_solution` and
+`robotis_interfaces`. Docker caches this step. To pick up new commits on those
+branches, run the following commands from the repository root:
+
+```bash
+docker compose -f docker/docker-compose.yml build --no-cache
+./docker/container.sh start
+```
 
 ## Available Solutions
 
