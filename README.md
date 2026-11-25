@@ -23,8 +23,8 @@ cd cyclo_solution
 ```
 
 The image builds locally from the public CUDA base image and ROS packages.
-The Dockerfile clones the `jazzy` branches of `cyclo_solution` and
-`robotis_interfaces`. Docker caches this step. To pick up new commits on those
+The Dockerfile clones `cyclo_solution` from `main` and `robotis_interfaces`
+from `jazzy`. Docker caches this step. To pick up new commits on those
 branches, run the following commands from the repository root:
 
 ```bash
