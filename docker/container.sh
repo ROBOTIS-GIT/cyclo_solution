@@ -12,12 +12,12 @@ show_help() {
     echo ""
     echo "Commands:"
     echo "  help                    Show this help message"
-    echo "  start                   Pull and start the container"
+    echo "  start                   Build and start the container"
     echo "  enter                   Enter the running container"
     echo "  stop                    Stop the container"
     echo ""
     echo "Examples:"
-    echo "  $0 start                Pull and start the released image"
+    echo "  $0 start                Build and start the local image"
     echo "  $0 enter                Enter the running container"
     echo "  $0 stop                 Stop the container"
 }
@@ -91,8 +91,7 @@ start_container() {
     echo "Starting cyclo_solution container..."
     check_for_update
 
-    docker compose -f "${SCRIPT_DIR}/docker-compose.yml" pull || return 1
-    docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
+    docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up --build -d
 }
 
 # Function to enter the container
